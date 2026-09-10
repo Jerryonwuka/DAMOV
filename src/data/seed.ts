@@ -148,7 +148,9 @@ export function buildSeed(): DamovDatabase {
     { fleet: 'DMV-003', reg: 'ABJ-338-KU', type: evType.id, status: 'available', hub: cbdHub.id },
     { fleet: 'DMV-004', reg: 'ABJ-449-KU', type: evType.id, status: 'available', hub: cbdHub.id },
     { fleet: 'DMV-005', reg: 'ABJ-551-KU', type: cngType.id, status: 'available', hub: kubwaHub.id },
-    { fleet: 'DMV-006', reg: 'ABJ-662-KU', type: cngType.id, status: 'charging', hub: depot.id },
+    { fleet: 'DMV-006', reg: 'ABJ-662-KU', type: evType.id, status: 'available', hub: kubwaHub.id },
+    { fleet: 'DMV-009', reg: 'ABJ-995-KU', type: evType.id, status: 'available', hub: mararabaHub.id },
+    { fleet: 'DMV-010', reg: 'ABJ-106-KU', type: cngType.id, status: 'charging', hub: depot.id },
     { fleet: 'DMV-007', reg: 'ABJ-773-KU', type: evType.id, status: 'maintenance', hub: depot.id },
     { fleet: 'DMV-008', reg: 'ABJ-884-KU', type: cngType.id, status: 'out_of_service', hub: depot.id },
   ]
@@ -187,7 +189,7 @@ export function buildSeed(): DamovDatabase {
   const institutionAdmin = addProfile('Amina Bello', '08030000008', 'institution_admin', ministry.id, { email: 'amina.bello@fmot.gov.ng', employment_id: 'FMOT-ADM-3' })
   addProfile('Dr. Femi Adeyemi', '08030000009', 'executive_viewer', damov.id, { email: 'femi.adeyemi@damov.ng' })
 
-  const driverNames = ['Samuel Ojo', 'Aliyu Garba', 'Peter Uche', 'Hauwa Lawal', 'Emeka Obi', 'Joseph Terver']
+  const driverNames = ['Samuel Ojo', 'Aliyu Garba', 'Peter Uche', 'Hauwa Lawal', 'Emeka Obi', 'Joseph Terver', 'Grace Okoye', 'Ibrahim Waziri']
   const drivers = driverNames.map((name, i) => {
     const profile = addProfile(name, `0805000000${i + 1}`, 'driver', operator.id, { hub_id: i % 2 ? cbdHub.id : mararabaHub.id, employment_id: `DFO-DR-${10 + i}` })
     db.driver_profiles.push({
