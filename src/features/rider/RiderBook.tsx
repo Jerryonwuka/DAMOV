@@ -19,6 +19,7 @@ import { directionStops } from '@/lib/selectors'
 import { durationLabel, lagosTime, naira } from '@/lib/format'
 import type { FareQuote, UUID } from '@/lib/types'
 import { checkJourneyAvailability } from '@/server/capacity'
+import { getConfigNumber } from '@/server/configuration'
 import { quoteBooking } from '@/server/fares'
 import { createBookingAndReserveCapacity } from '@/server/bookings'
 import { cn } from '@/lib/utils'
@@ -65,10 +66,12 @@ export function RiderBook() {
       (db) => {
         if (!directionId || !originId || !destinationId) return []
         const nowMs = Date.now()
+        // Bookable for as long as the gate is open — the same window boarding enforces.
+        const closeAfter = getConfigNumber(db, 'boarding.window_close_minutes', 5)
         return db.trips
           .filter((t) => t.route_direction_id === directionId && t.service_date === date)
           .filter((t) => !['cancelled', 'completed'].includes(t.status))
-          .filter((t) => new Date(t.scheduled_departure_at).getTime() > nowMs - 10 * 60_000)
+          .filter((t) => new Date(t.scheduled_departure_at).getTime() > nowMs - closeAfter * 60_000)
           .sort((a, b) => a.scheduled_departure_at.localeCompare(b.scheduled_departure_at))
           .map((trip) => {
             const availability = checkJourneyAvailability(trip.id, originId, destinationId)

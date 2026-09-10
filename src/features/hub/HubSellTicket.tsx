@@ -18,6 +18,7 @@ import { lagosTime, maskPhone, naira } from '@/lib/format'
 import { directionStops } from '@/lib/selectors'
 import type { FareQuote, PaymentMethod, UUID } from '@/lib/types'
 import { checkJourneyAvailability } from '@/server/capacity'
+import { getConfigNumber } from '@/server/configuration'
 import { quoteBooking } from '@/server/fares'
 import { createBookingAndReserveCapacity, createWalkInPassenger } from '@/server/bookings'
 import { cn } from '@/lib/utils'
@@ -90,10 +91,11 @@ export function HubSellTicket() {
     useCallback(
       (db) => {
         const nowMs = Date.now()
+        const closeAfter = getConfigNumber(db, 'boarding.window_close_minutes', 5)
         return db.trips
           .filter((t) => t.service_date === today && !['cancelled', 'completed'].includes(t.status))
           .filter((t) => t.origin_hub_id === hub?.id || t.destination_hub_id === hub?.id || !hub)
-          .filter((t) => new Date(t.scheduled_departure_at).getTime() > nowMs - 15 * 60_000)
+          .filter((t) => new Date(t.scheduled_departure_at).getTime() > nowMs - closeAfter * 60_000)
           .sort((a, b) => a.scheduled_departure_at.localeCompare(b.scheduled_departure_at))
           .slice(0, 20)
           .map((trip) => {
