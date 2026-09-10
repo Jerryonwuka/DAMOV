@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 712 600" width="712" height="600" role="img" aria-label="Damov">
+  <path fill="#6FBF48" d="M150 0H562A150 150 0 0 1 712 150V600H150A150 150 0 0 1 0 450V150A150 150 0 0 1 150 0Z"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="80" stroke-linejoin="round">
+    <path d="M545 600V325A100 100 0 0 0 445 225H350A100 100 0 0 0 250 325V470"/>
+  </g>
+  <path fill="#FFFFFF" d="M176 346L324 494L144 526Z"/>
+</svg>
