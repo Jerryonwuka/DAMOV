@@ -93,21 +93,21 @@ export function DriverAssignment() {
               <div
                 key={summary.trip.id}
                 className={cn(
-                  'flex items-center gap-3 rounded-xl border p-3',
+                  'rounded-xl border p-3',
                   summary.trip.id === shift.current?.trip.id ? 'border-primary/50 bg-primary/[0.06]' : 'border-border',
                 )}
               >
-                <div className="w-12 shrink-0 text-center">
-                  <p className="text-base font-bold tnum">{lagosTime(summary.trip.scheduled_departure_at)}</p>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{summary.direction_name}</p>
-                  <p className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{summary.trip.trip_code}</span>
-                    <span className="inline-flex items-center gap-1"><Users className="size-3" />{summary.booked} booked</span>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-base font-bold tnum">
+                    {lagosTime(summary.trip.scheduled_departure_at)}
+                    <span className="ml-2 text-sm font-semibold">{summary.direction_name}</span>
                   </p>
+                  <TripStatusBadge status={summary.trip.status} />
                 </div>
-                <TripStatusBadge status={summary.trip.status} />
+                <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap tnum"><MapPin className="size-3" />{summary.trip.trip_code}</span>
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap"><Users className="size-3" />{summary.booked} booked</span>
+                </p>
               </div>
             ))
           )}

@@ -106,15 +106,15 @@ export function CommandCentre() {
 
       {/* Map + panels */}
       <div className="grid gap-4 xl:grid-cols-[1.6fr_1fr]">
-        <Card className="overflow-hidden">
-          <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+        <Card className="flex min-h-[440px] flex-col overflow-hidden">
+          <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-2.5">
             <p className="text-sm font-semibold">Live network</p>
             <div className="flex items-center gap-2">
               <Badge tone="primary" dot pulse>{layers.vehicles.features.filter((f) => !f.properties?.stale).length} live</Badge>
               <Badge tone="warning" size="sm">Demo simulation</Badge>
             </div>
           </div>
-          <div className="h-[380px] xl:h-[460px]">
+          <div className="min-h-[380px] flex-1">
             <Suspense fallback={<Skeleton className="h-full w-full rounded-none" />}>
               <DamovMap layers={layers} theme={theme} showHubs={false} interactive onFeatureClick={(kind, props) => {
                 if (kind === 'vehicle') {

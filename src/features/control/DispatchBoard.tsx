@@ -121,8 +121,9 @@ export function DispatchBoard() {
                     <Card interactive className={cn('p-3', late && 'border-warning/60')} onClick={() => setDetail(summary)}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="text-sm font-bold tnum">{lagosTime(summary.trip.scheduled_departure_at)} <span className="font-medium text-muted-foreground">{summary.trip.trip_code}</span></p>
-                          <p className="truncate text-xs text-muted-foreground">{summary.route_code} · {summary.direction_name}</p>
+                          <p className="text-base font-bold leading-tight tnum">{lagosTime(summary.trip.scheduled_departure_at)}</p>
+                          <p className="truncate text-xs font-medium tnum">{summary.trip.trip_code}</p>
+                          <p className="truncate text-xs text-muted-foreground">{summary.direction_name}</p>
                         </div>
                         <TripStatusBadge status={summary.trip.status} />
                       </div>

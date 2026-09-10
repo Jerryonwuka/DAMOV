@@ -289,7 +289,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                           />
                         )}
                         <item.icon className={cn('size-5 transition-transform duration-200 ease-damov', isActive && 'scale-110')} />
-                        {item.label}
+                        {item.short ?? item.label}
                       </span>
                     )}
                   </NavLink>

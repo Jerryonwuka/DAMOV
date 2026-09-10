@@ -211,10 +211,20 @@ export function buildSeed(): DamovDatabase {
     'Halima Usman', 'Victor Aigbe', 'Esther Bassey', 'Umar Farouk', 'Oluwaseun Cole',
     'Patience John', 'Ahmed Lawal', 'Chika Nwankwo',
   ]
-  const riders = riderNames.map((name, i) => {
-    const sponsored = i < 12
-    const profile = addProfile(name, `0807${String(1_000_000 + i * 13_577).slice(0, 7)}`, 'rider', sponsored ? ministry.id : null)
-    const staffId = sponsored ? `FMOT/${2020 + (i % 5)}/${String(1400 + i)}` : null
+  // A pilot corridor carries hundreds of distinct commuters a day. Beyond the
+  // named demo passengers, a generated population keeps trips-per-rider
+  // realistic so the subsidy caps are exercised rather than saturated.
+  const firstNames = ['Adaeze', 'Bashir', 'Chinedu', 'Damilola', 'Efe', 'Fatima', 'Gbenga', 'Hadiza', 'Ifeanyi', 'Jumoke', 'Kabiru', 'Lola', 'Musa', 'Nkechi', 'Obinna', 'Peju', 'Rukayat', 'Sadiq', 'Titi', 'Uche', 'Yemi', 'Zara', 'Emeka', 'Ngozi', 'Tunde', 'Amaka', 'Sani', 'Bisi', 'Kunle', 'Ronke']
+  const lastNames = ['Okonkwo', 'Abdullahi', 'Adewale', 'Eze', 'Bello', 'Okoro', 'Ibrahim', 'Adeyemi', 'Nwachukwu', 'Garba', 'Olawale', 'Umar', 'Chukwu', 'Danladi', 'Ojo', 'Yusuf', 'Anyanwu', 'Lawal', 'Igwe', 'Musa']
+  const generatedNames: string[] = []
+  for (let i = 0; i < 380; i++) generatedNames.push(`${firstNames[i % firstNames.length]} ${lastNames[Math.floor(i / firstNames.length) % lastNames.length]}${i >= firstNames.length * lastNames.length ? ` ${i}` : ''}`)
+  const allRiderNames = [...riderNames, ...generatedNames]
+
+  const riders = allRiderNames.map((name, i) => {
+    const sponsored = i < 12 || (i >= riderNames.length && i % 5 !== 0)
+    const phone = i < riderNames.length ? `0807${String(1_000_000 + i * 13_577).slice(0, 7)}` : `0810${String(2_000_000 + i * 7_919).slice(0, 7)}`
+    const profile = addProfile(name, phone, 'rider', sponsored ? ministry.id : null)
+    const staffId = sponsored ? `FMOT/${2018 + (i % 7)}/${String(1400 + i)}` : null
     db.rider_profiles.push({
       id: uuid(), profile_id: profile.id, organization_id: sponsored ? ministry.id : null,
       staff_id: staffId,
@@ -236,10 +246,10 @@ export function buildSeed(): DamovDatabase {
   })
 
   // Eligible staff who have not yet registered — the adoption gap the ministry tracks.
-  for (let i = 0; i < 28; i++) {
+  for (let i = 0; i < 140; i++) {
     db.eligibility_records.push({
       id: uuid(), rider_id: null, organization_id: ministry.id,
-      staff_id: `FMOT/${2018 + (i % 6)}/${String(2200 + i)}`,
+      staff_id: `FMOT/${2018 + (i % 6)}/${String(3200 + i)}`,
       full_name: `FMoT Staff ${String(i + 1).padStart(2, '0')}`,
       phone: null, status: 'active', valid_from: '2026-01-01', valid_to: '2026-12-31',
       import_batch: 'FMOT-2026-Q1', verified_at: now, verified_by: institutionAdmin.id,
@@ -418,14 +428,29 @@ export function buildSeed(): DamovDatabase {
     (a, b) => new Date(a.scheduled_departure_at).getTime() - new Date(b.scheduled_departure_at).getTime(),
   )
 
+  // A vehicle or driver can only be on one trip at a time. Blocks are
+  // allocated against real time windows so the Command Centre's bus count
+  // always reconciles with the trips actually in service.
+  const vehicleBusy = new Map<string, [number, number][]>()
+  const driverBusy = new Map<string, [number, number][]>()
+  const isFree = (windows: [number, number][] | undefined, from: number, to: number) =>
+    !(windows ?? []).some(([a, b]) => from < b && to > a)
+
   sortedTrips.forEach((trip, index) => {
-    const vehicle = usableVehicles[index % usableVehicles.length]
-    const driver = activeDrivers[index % activeDrivers.length]
     const departureMs = new Date(trip.scheduled_departure_at).getTime()
     const arrivalMs = new Date(trip.scheduled_arrival_at).getTime()
+    // Turnaround buffer either side of the scheduled run.
+    const from = departureMs - 20 * 60_000
+    const to = arrivalMs + 20 * 60_000
 
     // Trips more than a few hours out stay unassigned so the dispatch board has work.
     if (departureMs > nowMs + 3 * 3_600_000) return
+
+    const vehicle = usableVehicles.find((v) => isFree(vehicleBusy.get(v.id), from, to))
+    const driver = activeDrivers.find((d) => isFree(driverBusy.get(d.id), from, to))
+    if (!vehicle || !driver) return
+    vehicleBusy.set(vehicle.id, [...(vehicleBusy.get(vehicle.id) ?? []), [from, to]])
+    driverBusy.set(driver.id, [...(driverBusy.get(driver.id) ?? []), [from, to]])
 
     trip.vehicle_id = vehicle.id
     trip.driver_id = driver.id
@@ -540,7 +565,10 @@ export function buildSeed(): DamovDatabase {
       return null // segment full — exactly what the engine is meant to do
     }
 
-    const createdAt = new Date(new Date(trip.scheduled_departure_at).getTime() - (30 + rand() * 600) * 60_000).toISOString()
+    // Bookings are made ahead of departure, but never in the future relative to now.
+    const createdAt = new Date(
+      Math.min(new Date(trip.scheduled_departure_at).getTime() - (30 + rand() * 600) * 60_000, nowMs - (2 + rand() * 180) * 60_000),
+    ).toISOString()
     const booking: Booking = {
       id: uuid(), booking_reference: bookingReference(), rider_id: riderProfile.id, trip_id: trip.id,
       origin_route_stop_id: origin.id, destination_route_stop_id: destination.id,
@@ -649,14 +677,14 @@ export function buildSeed(): DamovDatabase {
   /* --- Direct costs ---------------------------------------------------- */
   const costTemplate: { category: CostCategory; perKm?: number; flat?: number; unit?: string }[] = [
     { category: 'energy', perKm: 92, unit: 'km' },
-    { category: 'driver', flat: 4_000 },
+    { category: 'driver', flat: 3_000 },
     { category: 'support_staff', flat: 1_200 },
     { category: 'maintenance_reserve', perKm: 38 },
     { category: 'tyre_reserve', perKm: 14 },
     { category: 'cleaning', flat: 700 },
     { category: 'terminal', flat: 900 },
     { category: 'toll', flat: 400 },
-    { category: 'lease_allocation', flat: 5_000 },
+    { category: 'lease_allocation', flat: 3_500 },
   ]
   for (const trip of db.trips.filter((t) => ['completed', 'in_service', 'departed'].includes(t.status))) {
     const stops = db.route_stops

@@ -138,7 +138,7 @@ export function CostsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-8">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile index={0} label="Recognised revenue" value={naira(totals.revenue)} tone="primary" />
         <StatTile index={1} label="Direct cost" value={naira(totals.cost)} icon={Coins} />
         <StatTile index={2} label="Contribution margin" value={naira(totals.margin)} icon={totals.margin >= 0 ? TrendingUp : TrendingDown} tone={totals.margin >= 0 ? 'primary' : 'critical'} hint={totals.revenue ? `${pct((totals.margin / totals.revenue) * 100)} of revenue` : undefined} />

@@ -99,7 +99,7 @@ export function StatTile({
           )}
         </div>
         <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-2xl font-bold tracking-tight tnum">{value}</span>
+          <span className="whitespace-nowrap text-2xl font-bold tracking-tight tnum">{value}</span>
           {delta && (
             <span
               className={cn(

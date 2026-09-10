@@ -144,7 +144,9 @@ export function SignInPage() {
       {/* Form panel */}
       <div className="flex flex-col justify-center bg-background px-5 py-10 sm:px-10">
         <div className="mx-auto w-full max-w-md">
-          <DamovLogo className="mb-8 lg:hidden" />
+          <div className="mb-8 lg:hidden">
+            <DamovLogo />
+          </div>
 
           <div className="mb-6 inline-flex rounded-xl bg-muted p-1">
             {(['passenger', 'staff'] as const).map((option) => (

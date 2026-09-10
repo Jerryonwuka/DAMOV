@@ -26,7 +26,7 @@ export function ProgrammeOverview() {
         actions={<Button asChild><Link to="/institution/reports">Monthly statement <ArrowRight className="size-4" /></Link></Button>}
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-8">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile index={0} label="Eligible staff" value={p.eligibleStaff} icon={Users} />
         <StatTile index={1} label="Registered riders" value={p.registered} icon={ShieldCheck} tone="primary" hint={`${pct(adoption)} adoption`} />
         <StatTile index={2} label="Active this month" value={p.activeRiders} tone="info" />

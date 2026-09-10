@@ -14,6 +14,8 @@ export interface NavItem {
   end?: boolean
   /** Shown in the mobile tab bar for rider and driver surfaces. */
   primary?: boolean
+  /** Compact label for the mobile tab bar. */
+  short?: string
 }
 
 export interface NavSection {
@@ -50,9 +52,9 @@ export const SURFACE_NAV: Record<Surface, NavSection[]> = {
   driver: [
     {
       items: [
-        { to: '/driver', label: "Today's Assignment", icon: Bus, permission: 'driver.assignment', end: true, primary: true },
-        { to: '/driver/inspection', label: 'Vehicle Inspection', icon: ClipboardCheck, permission: 'driver.inspection', primary: true },
-        { to: '/driver/trip', label: 'Current Trip', icon: Gauge, permission: 'driver.trip', primary: true },
+        { to: '/driver', label: "Today's Assignment", short: 'Shift', icon: Bus, permission: 'driver.assignment', end: true, primary: true },
+        { to: '/driver/inspection', label: 'Vehicle Inspection', short: 'Inspect', icon: ClipboardCheck, permission: 'driver.inspection', primary: true },
+        { to: '/driver/trip', label: 'Current Trip', short: 'Trip', icon: Gauge, permission: 'driver.trip', primary: true },
         { to: '/driver/stops', label: 'Stops', icon: MapPinned, permission: 'driver.trip', primary: true },
         { to: '/driver/incidents', label: 'Incidents', icon: AlertTriangle, permission: 'hub.incidents' },
         { to: '/driver/shift', label: 'Shift Summary', icon: ListChecks, permission: 'driver.assignment' },
