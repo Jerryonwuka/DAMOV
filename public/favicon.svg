@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 712 600">
+  <rect width="712" height="600" rx="120" fill="#0E392C"/>
+  <g transform="translate(89 75) scale(0.75)">
+    <path fill="#6FBF48" d="M150 0H562A150 150 0 0 1 712 150V600H150A150 150 0 0 1 0 450V150A150 150 0 0 1 150 0Z"/>
+    <path fill="none" stroke="#0E392C" stroke-width="80" stroke-linejoin="round" d="M545 600V325A100 100 0 0 0 445 225H350A100 100 0 0 0 250 325V470"/>
+    <path fill="#0E392C" d="M176 346L324 494L144 526Z"/>
+  </g>
+</svg>
