@@ -70,7 +70,7 @@ export function ProgrammeOverview() {
           <Card>
             <CardHeader className="pb-2"><CardTitle>Exceptions</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <div className="flex items-center justify-between"><span>Rejected subsidy claims</span><Badge tone={p.rejections ? 'warning' : 'neutral'}>{p.rejections}</Badge></div>
+              <div className="flex items-center justify-between"><span>Trips outside programme rules</span><Badge tone={p.rejections ? 'warning' : 'neutral'}>{p.rejections}</Badge></div>
               <div className="flex items-center justify-between"><span>Pending verifications</span><Badge tone="neutral">{p.eligibility.filter((e) => e.status === 'pending').length}</Badge></div>
               <div className="flex items-center justify-between"><span>Released reservations</span><span className="tnum">{naira(p.subsidyReleased)}</span></div>
             </CardContent>

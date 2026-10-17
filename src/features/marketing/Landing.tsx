@@ -87,14 +87,20 @@ export function Landing() {
           </div>
 
           {/* Device cluster */}
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }} className="relative mx-auto h-[640px] w-full max-w-[560px]">
-            <BrowserFrame className="absolute left-0 top-6 w-[520px] max-w-full origin-top-left scale-[0.82] sm:scale-95" title="control.damov.ng · Command Centre">
-              <ControlMock compact />
-            </BrowserFrame>
-            <div className="absolute -bottom-2 right-0 origin-bottom-right scale-[0.78] sm:scale-90">
-              <PhoneFrame><TicketMock /></PhoneFrame>
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }} className="relative mx-auto w-full max-w-[560px]">
+            {/* Phones alone on small screens; the control panel joins from md up. */}
+            <div className="flex justify-center md:hidden">
+              <PhoneFrame className="scale-90"><TicketMock /></PhoneFrame>
             </div>
-            <div className="pointer-events-none absolute -right-20 top-10 size-72 rounded-full bg-primary/20 blur-3xl" />
+            <div className="relative hidden h-[640px] md:block">
+              <BrowserFrame className="absolute left-0 top-6 w-[520px] max-w-full origin-top-left scale-95" title="control.damov.ng · Command Centre">
+                <ControlMock compact />
+              </BrowserFrame>
+              <div className="absolute -bottom-2 right-0 origin-bottom-right scale-90">
+                <PhoneFrame><TicketMock /></PhoneFrame>
+              </div>
+              <div className="pointer-events-none absolute -right-20 top-10 size-72 rounded-full bg-primary/15 blur-3xl" />
+            </div>
           </motion.div>
         </div>
 

@@ -233,7 +233,7 @@ export function buildSeed(): DamovDatabase {
   const firstNames = ['Adaeze', 'Bashir', 'Chinedu', 'Damilola', 'Efe', 'Fatima', 'Gbenga', 'Hadiza', 'Ifeanyi', 'Jumoke', 'Kabiru', 'Lola', 'Musa', 'Nkechi', 'Obinna', 'Peju', 'Rukayat', 'Sadiq', 'Titi', 'Uche', 'Yemi', 'Zara', 'Emeka', 'Ngozi', 'Tunde', 'Amaka', 'Sani', 'Bisi', 'Kunle', 'Ronke']
   const lastNames = ['Okonkwo', 'Abdullahi', 'Adewale', 'Eze', 'Bello', 'Okoro', 'Ibrahim', 'Adeyemi', 'Nwachukwu', 'Garba', 'Olawale', 'Umar', 'Chukwu', 'Danladi', 'Ojo', 'Yusuf', 'Anyanwu', 'Lawal', 'Igwe', 'Musa']
   const generatedNames: string[] = []
-  for (let i = 0; i < 380; i++) generatedNames.push(`${firstNames[i % firstNames.length]} ${lastNames[Math.floor(i / firstNames.length) % lastNames.length]}${i >= firstNames.length * lastNames.length ? ` ${i}` : ''}`)
+  for (let i = 0; i < 900; i++) generatedNames.push(`${firstNames[i % firstNames.length]} ${lastNames[Math.floor(i / firstNames.length) % lastNames.length]}${i >= firstNames.length * lastNames.length ? ` ${i}` : ''}`)
   const allRiderNames = [...riderNames, ...generatedNames]
 
   const riders = allRiderNames.map((name, i) => {
@@ -241,7 +241,7 @@ export function buildSeed(): DamovDatabase {
     // population splits between the ministry, a company, a school and the public.
     const generated = i >= riderNames.length
     const sponsor =
-      i < 12 ? ministry : !generated ? null : i % 10 === 0 ? company : i % 10 === 5 ? school : i % 5 === 0 ? null : ministry
+      i < 12 ? ministry : !generated ? null : i % 10 === 0 ? company : i % 10 === 5 ? school : i % 2 === 1 ? null : ministry
     const sponsored = Boolean(sponsor)
     const phone = i < riderNames.length ? `0807${String(1_000_000 + i * 13_577).slice(0, 7)}` : `0810${String(2_000_000 + i * 7_919).slice(0, 7)}`
     const profile = addProfile(name, phone, 'rider', sponsor?.id ?? null)
@@ -757,6 +757,7 @@ export function buildSeed(): DamovDatabase {
     return booking
   }
 
+  const publicRiders = riders.filter((r) => !riderById.get(r.id)?.organization_id)
   for (const trip of sortedTrips) {
     const departureMs = new Date(trip.scheduled_departure_at).getTime()
     const hour = Number(new Date(trip.scheduled_departure_at).toLocaleString('en-GB', { timeZone: 'Africa/Lagos', hour: '2-digit', hour12: false }))
@@ -772,7 +773,8 @@ export function buildSeed(): DamovDatabase {
     const base = isPeak ? 27 + Math.floor(rand() * 13) : 10 + Math.floor(rand() * 9)
     const load = Math.round(base * growth * weekend)
     for (let i = 0; i < load; i++) {
-      const rider = pick(riders)
+      // Staff programmes run Monday to Friday; weekend travel skews to the public.
+      const rider = dow === 0 || dow === 6 ? (chance(0.7) ? pick(publicRiders) : pick(riders)) : pick(riders)
       const cash = chance(0.38)
       seedBooking(trip, rider, {
         channel: cash ? 'hub' : chance(0.15) ? 'whatsapp' : 'rider_web',

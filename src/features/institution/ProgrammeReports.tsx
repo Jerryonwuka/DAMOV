@@ -34,7 +34,7 @@ export function ProgrammeReports() {
       ['Released on cancellation ₦', p.subsidyReleased],
       ['Programme ceiling ₦', p.policy?.programme_budget ?? null],
       ['Budget consumed ₦', p.policy?.budget_consumed ?? null],
-      ['Rejected subsidy claims', p.rejections],
+      ['Trips outside programme rules', p.rejections],
       [],
       ['Corridor', 'Sponsored trips', 'Subsidy ₦'],
       ...p.corridors.map((c) => [`${c.code} ${c.name}`, c.trips, c.subsidy]),

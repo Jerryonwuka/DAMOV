@@ -53,7 +53,9 @@ export function usePublicStats() {
 export function TicketMock({ className }: { className?: string }) {
   const ticket = useDb(
     useCallback((db) => {
-      const t = db.tickets.find((x) => x.status === 'issued') ?? db.tickets[0]
+      // A co-paid ticket tells the whole story: gross fare, sponsor share, what was paid.
+      const coPaid = db.bookings.find((b) => b.status === 'confirmed' && b.sponsor_contribution > 0 && b.passenger_contribution > 0)
+      const t = (coPaid && db.tickets.find((x) => x.booking_id === coPaid.id)) ?? db.tickets.find((x) => x.status === 'issued') ?? db.tickets[0]
       if (!t) return null
       const booking = db.bookings.find((b) => b.id === t.booking_id)!
       const trip = db.trips.find((x) => x.id === booking.trip_id)!

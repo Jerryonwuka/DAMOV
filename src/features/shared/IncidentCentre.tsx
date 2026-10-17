@@ -132,7 +132,7 @@ export function IncidentCentre() {
     { key: 'ref', header: 'Ref', value: (r) => r.incident.reference, cell: (r) => <span className="font-semibold tnum">{r.incident.reference}</span> },
     { key: 'severity', header: 'Severity', value: (r) => SEVERITIES.indexOf(r.incident.severity), cell: (r) => <SeverityBadge severity={r.incident.severity} /> },
     { key: 'category', header: 'Category', value: (r) => r.incident.category, cell: (r) => titleCase(r.incident.category) },
-    { key: 'description', header: 'Description', value: (r) => r.incident.description, cell: (r) => <span className="line-clamp-1 max-w-md">{r.incident.description}</span> },
+    { wrap: true, key: 'description', header: 'Description', value: (r) => r.incident.description, cell: (r) => <span className="line-clamp-1 max-w-md">{r.incident.description}</span> },
     { key: 'trip', header: 'Trip', value: (r) => r.trip_code ?? '', cell: (r) => r.trip_code ?? '—', hideable: true },
     { key: 'vehicle', header: 'Vehicle', value: (r) => r.vehicle ?? '', cell: (r) => r.vehicle ?? '—', hideable: true },
     { key: 'status', header: 'Status', value: (r) => r.incident.status, cell: (r) => <Badge tone={['resolved', 'closed'].includes(r.incident.status) ? 'ink' : 'warning'}>{titleCase(r.incident.status)}</Badge> },

@@ -124,8 +124,8 @@ export function NetworkPage() {
   const flagColumns: Column<DataQualityFlag>[] = [
     { key: 'severity', header: 'Severity', value: (f) => (f.severity === 'blocking' ? 0 : 1), cell: (f) => <Badge tone={f.severity === 'blocking' ? 'critical' : 'warning'}>{f.severity}</Badge> },
     { key: 'entity', header: 'Record', value: (f) => f.entity_label, cell: (f) => <span><span className="text-2xs uppercase text-muted-foreground">{f.entity_type}</span> <span className="font-medium">{f.entity_label}</span></span> },
-    { key: 'issue', header: 'Issue', value: (f) => f.issue, cell: (f) => titleCase(f.issue) },
-    { key: 'detail', header: 'Detail', value: (f) => f.detail, cell: (f) => <span className="text-xs text-muted-foreground">{f.detail}</span> },
+    { wrap: true, key: 'issue', header: 'Issue', value: (f) => f.issue, cell: (f) => titleCase(f.issue) },
+    { wrap: true, key: 'detail', header: 'Detail', value: (f) => f.detail, cell: (f) => <span className="text-xs text-muted-foreground">{f.detail}</span> },
   ]
 
   return (

@@ -35,7 +35,7 @@ npm run build      # production bundle in dist/
 npm run typecheck  # strict TypeScript across the whole app
 ```
 
-Open the app and pick a seeded account from the **Staff** tab, or sign in as a passenger with any listed number and the demo OTP `000000`. The **Demo role switcher** at the bottom of the navigation rail jumps between every role without signing out. **Reset demo data** (↻ in the top bar) reseeds a fresh operating day.
+The root URL is the public site — home, riders, institutions, operators, the network map, about and contact — with device mock-ups rendered from the live dataset. **Sign in** (`/signin`) opens the product: pick a seeded account from the **Staff** tab, or sign in as a passenger with any listed number and the demo OTP `000000`. The **Demo role switcher** at the bottom of the navigation rail jumps between every role without signing out. **Reset demo data** (↻ in the top bar) reseeds a fresh operating day.
 
 ### Seeded accounts
 
@@ -88,17 +88,17 @@ supabase/migrations/      Schema, constraints, RPC functions, row-level security
 
 ## Design system
 
-Brand primitives from the brand sheet, as Tailwind tokens (`tailwind.config.ts`):
+Dark is the primary surface — the operating system runs in control rooms, at counters before dawn and on phones in moving buses — with light available for daylight counters and print. Tokens live in `src/index.css` and `tailwind.config.ts`:
 
 | Token | Value | Use |
 | --- | --- | --- |
-| Damov green | `#6FBF48` | Primary action, active service, live |
-| Deep operational green | `#0E392C` | Navigation rail, operational chrome |
+| Damov green | `hsl(100 58% 56%)` | Primary action, active service, live, the only accent |
+| Ink | `hsl(160 10% 4%)` | The operating surface; panels carry a one-pixel top highlight |
 | Signal amber | `#E9B10A` | Warnings, targets, pending |
 | Signal orange | `#D9522A` | Critical attention only |
-| Mist | `#CFD4D2` | Dividers, muted surfaces |
+| Good | `hsl(152 64% 46%)` | Positive deltas and healthy status only — never a series colour |
 
-Inter throughout; tabular numerals on every compared figure; status carried by colour *and* text; light and dark themes; reduced-motion respected. Micro-interactions are purposeful — rolling metrics, animated nav indicator, spring-in boarding decisions, staggered lists, drag-to-reorder stops — never decorative.
+Inter for the interface and Space Grotesk for display figures; Phosphor duotone icons through `src/components/icons.ts`; tabular numerals on every compared figure; status carried by colour *and* text. The chart kit (`src/components/charts.tsx`) — sparkline, area trend, volume bars, segment bar, ring gauge — draws one validated palette with Damov green as the first series. Motion is purposeful: rolling metrics, a sliding nav indicator, spring-in gate decisions, staggered lists. No glows, no gradients as decoration.
 
 ## Environment
 
