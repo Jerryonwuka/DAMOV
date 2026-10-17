@@ -453,7 +453,10 @@ export function buildSeed(): DamovDatabase {
   // Two weeks of service so trends, deltas and route economics have a past to
   // compare against. Older days carry lighter loads to keep the dataset lean.
   const historyDates = Array.from({ length: 10 }, (_, i) => shiftDays(today, i - 9))
-  for (const date of historyDates) {
+  // Tomorrow and the day after are generated too, so a passenger opening the
+  // app in the evening still has departures to book and dispatch has work.
+  const serviceDates = [...historyDates, shiftDays(today, 1), shiftDays(today, 2)]
+  for (const date of serviceDates) {
     for (const template of db.schedule_templates) {
       const calendar = db.service_calendars.find((c) => c.id === template.service_calendar_id)!
       const dow = new Date(`${date}T12:00:00Z`).getUTCDay()
