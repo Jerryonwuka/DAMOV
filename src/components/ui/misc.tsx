@@ -4,7 +4,7 @@ import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
 import * as ProgressPrimitive from '@radix-ui/react-progress'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
-import { Check } from 'lucide-react'
+import { Check } from '@/components/icons'
 import { cn } from '@/lib/utils'
 
 /* Switch ------------------------------------------------------------- */
@@ -82,7 +82,7 @@ const TooltipContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        'z-50 max-w-xs overflow-hidden rounded-lg bg-forest-800 px-3 py-1.5 text-xs text-white shadow-lifted',
+        'z-50 max-w-xs overflow-hidden rounded-lg bg-ink-800 px-3 py-1.5 text-xs text-white shadow-lifted',
         'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
         className,
       )}

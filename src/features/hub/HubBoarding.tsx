@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertTriangle, CheckCircle2, ScanLine, ShieldAlert, Undo2, XCircle } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, ScanLine, ShieldAlert, Undo2, XCircle } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useServiceDate } from '@/hooks/use-damov'

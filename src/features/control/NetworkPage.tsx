@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AlertTriangle, CheckCircle2, Database, MapPinned, Upload } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Database, MapPinned, Upload } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'

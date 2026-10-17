@@ -1,82 +1,92 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Damov theme.
+ *
+ * Dark is the primary surface: the operating system runs in control rooms,
+ * at terminal counters before dawn and on phones in moving buses. Light stays
+ * a first-class option for daylight counters and printed manifests.
+ */
 @layer base {
   :root {
     --background: 150 20% 98%;
-    --foreground: 162 30% 10%;
+    --foreground: 160 20% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 162 30% 10%;
+    --card-foreground: 160 20% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 162 30% 10%;
+    --popover-foreground: 160 20% 8%;
 
-    --primary: 100 48% 44%;
+    --primary: 100 50% 42%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 155 18% 94%;
-    --secondary-foreground: 162 40% 16%;
+    --secondary: 150 16% 94%;
+    --secondary-foreground: 160 25% 14%;
 
-    --muted: 155 16% 95%;
-    --muted-foreground: 162 10% 42%;
+    --muted: 150 14% 95%;
+    --muted-foreground: 160 8% 42%;
 
-    --accent: 100 48% 95%;
-    --accent-foreground: 162 55% 18%;
+    --accent: 100 48% 94%;
+    --accent-foreground: 100 55% 22%;
 
     --destructive: 14 70% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 158 12% 89%;
-    --input: 158 12% 87%;
-    --ring: 100 48% 44%;
+    --border: 150 10% 89%;
+    --input: 150 10% 86%;
+    --ring: 100 50% 42%;
 
-    --sidebar: 162 61% 12%;
-    --sidebar-foreground: 155 25% 92%;
-    --sidebar-muted: 158 16% 64%;
-    --sidebar-accent: 100 48% 52%;
-    --sidebar-border: 162 40% 20%;
+    --sidebar: 160 10% 5%;
+    --sidebar-foreground: 150 15% 92%;
+    --sidebar-muted: 155 6% 58%;
+    --sidebar-accent: 100 55% 56%;
+    --sidebar-border: 160 8% 12%;
 
-    --radius: 0.75rem;
+    --glow: 100 60% 56%;
+    --radius: 0.875rem;
   }
 
   .dark {
-    --background: 162 45% 7%;
-    --foreground: 150 22% 95%;
+    --background: 160 10% 4%;
+    --foreground: 150 15% 95%;
 
-    --card: 162 42% 10%;
-    --card-foreground: 150 22% 95%;
+    --card: 160 8% 7%;
+    --card-foreground: 150 15% 95%;
 
-    --popover: 162 45% 9%;
-    --popover-foreground: 150 22% 95%;
+    --popover: 160 8% 8%;
+    --popover-foreground: 150 15% 95%;
 
-    --primary: 100 48% 52%;
-    --primary-foreground: 162 64% 8%;
+    --primary: 100 58% 56%;
+    --primary-foreground: 120 50% 6%;
 
-    --secondary: 162 32% 15%;
-    --secondary-foreground: 150 22% 92%;
+    --secondary: 160 8% 12%;
+    --secondary-foreground: 150 15% 92%;
 
-    --muted: 162 30% 14%;
-    --muted-foreground: 158 12% 62%;
+    --muted: 160 7% 11%;
+    --muted-foreground: 155 6% 60%;
 
-    --accent: 162 36% 17%;
-    --accent-foreground: 100 48% 70%;
+    --accent: 110 30% 14%;
+    --accent-foreground: 100 60% 74%;
 
-    --destructive: 14 70% 52%;
+    --destructive: 14 72% 54%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 162 28% 18%;
-    --input: 162 28% 20%;
-    --ring: 100 48% 52%;
+    --border: 160 7% 14%;
+    --input: 160 7% 17%;
+    --ring: 100 58% 56%;
 
-    --sidebar: 162 55% 6%;
-    --sidebar-foreground: 150 22% 92%;
-    --sidebar-muted: 158 12% 58%;
-    --sidebar-accent: 100 48% 52%;
-    --sidebar-border: 162 34% 14%;
+    --sidebar: 160 10% 4%;
+    --sidebar-foreground: 150 15% 92%;
+    --sidebar-muted: 155 6% 54%;
+    --sidebar-accent: 100 58% 58%;
+    --sidebar-border: 160 8% 11%;
+
+    --glow: 100 65% 58%;
   }
 
   * {
@@ -93,16 +103,14 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Focus: always visible, never gaudy. */
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 
   ::selection {
-    @apply bg-primary/25;
+    @apply bg-primary/30;
   }
 
-  /* Damov scrollbars — thin, brand-tinted, never intrusive. */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -131,41 +139,93 @@
 }
 
 @layer components {
-  /* Numeric data reads as tabular everywhere it is compared. */
   .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: 'tnum';
   }
 
+  .font-display {
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Dotted plot ground used behind charts and the hero. */
+  .surface-dots {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.08) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
   .surface-grid {
     background-image:
-      linear-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--border) / 0.5) 1px, transparent 1px);
+      linear-gradient(hsl(var(--border) / 0.6) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.6) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
-  .forest-gradient {
+  /* The signature surface: near-black with a green bloom top-right. */
+  .ink-gradient {
     background:
-      radial-gradient(120% 120% at 85% 0%, hsl(100 48% 52% / 0.18) 0%, transparent 55%),
-      radial-gradient(90% 90% at 0% 100%, hsl(162 60% 20% / 0.9) 0%, transparent 60%),
-      hsl(162 61% 12%);
+      radial-gradient(110% 90% at 85% 0%, hsl(100 60% 48% / 0.28) 0%, transparent 55%),
+      radial-gradient(80% 80% at 0% 100%, hsl(162 60% 22% / 0.55) 0%, transparent 60%),
+      hsl(160 10% 5%);
+  }
+
+  /* Card surface: a one-pixel top highlight sells the depth without a glow. */
+  .glass {
+    background:
+      linear-gradient(180deg, hsl(0 0% 100% / 0.035) 0%, transparent 32%),
+      hsl(var(--card));
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.05),
+      0 1px 2px hsl(160 20% 2% / 0.5);
+  }
+  :root:not(.dark) .glass {
+    background: hsl(var(--card));
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.9),
+      0 1px 2px hsl(160 20% 20% / 0.06),
+      0 8px 24px -16px hsl(160 20% 20% / 0.18);
+  }
+
+  .glow-ring {
+    box-shadow:
+      0 0 0 1px hsl(var(--glow) / 0.35),
+      0 0 24px -4px hsl(var(--glow) / 0.45);
+  }
+
+  .text-gradient {
+    background: linear-gradient(92deg, hsl(100 70% 70%) 0%, hsl(140 65% 62%) 55%, hsl(165 70% 60%) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .skeleton-sheen {
     @apply relative overflow-hidden;
   }
   .skeleton-sheen::after {
-    @apply absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/25 to-transparent;
+    @apply absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/15 to-transparent;
     content: '';
   }
 
-  /* Press feedback used across every interactive control. */
   .press {
     @apply transition-transform duration-150 ease-damov active:scale-[0.975];
   }
+
+  /* Marquee used on the marketing site. */
+  .marquee {
+    animation: marquee var(--marquee-duration, 40s) linear infinite;
+  }
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
 }
 
-/* MapLibre overrides so the map inherits Damov surfaces. */
+/* MapLibre inherits Damov surfaces. */
 .maplibregl-popup-content {
   @apply rounded-xl border border-border bg-popover p-0 text-popover-foreground shadow-lifted;
 }
@@ -175,6 +235,14 @@
 }
 .maplibregl-ctrl-group {
   @apply overflow-hidden rounded-lg border border-border shadow-card;
+  background: hsl(var(--card)) !important;
+}
+.maplibregl-ctrl-group button {
+  @apply text-foreground;
+  filter: invert(0);
+}
+.dark .maplibregl-ctrl-group button span {
+  filter: invert(1);
 }
 .maplibregl-ctrl-attrib {
   @apply text-2xs;

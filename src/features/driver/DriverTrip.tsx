@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertTriangle, ArrowRight, CheckCircle2, Flag, MapPin, Play, ShieldAlert, Users } from 'lucide-react'
+import { AlertTriangle, ArrowRight, CheckCircle2, Flag, MapPin, Play, ShieldAlert, Users } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -102,7 +102,7 @@ export function DriverTrip() {
 
       {/* Status card */}
       <Card className="overflow-hidden">
-        <div className={cn('px-5 py-4 text-white', inService ? 'bg-forest-700' : 'bg-forest-800')}>
+        <div className={cn('px-5 py-4 text-white', inService ? 'bg-ink-700' : 'bg-ink-800')}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-2xs uppercase tracking-wide text-white/60">Scheduled</p>
@@ -186,7 +186,7 @@ export function DriverTrip() {
                     <p className="flex items-center gap-2 text-sm">
                       <CheckCircle2 className="size-4 text-primary" /> Final stop reached. Confirm counts to close the trip.
                     </p>
-                    <Button size="xl" className="w-full" variant="forest" onClick={() => setCompleting(true)}>
+                    <Button size="xl" className="w-full" variant="ink" onClick={() => setCompleting(true)}>
                       <Flag className="size-5" /> Complete trip
                     </Button>
                   </>

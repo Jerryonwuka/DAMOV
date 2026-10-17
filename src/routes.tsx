@@ -6,6 +6,10 @@ import { AppShell } from '@/components/layout/AppShell'
 import { PermissionDenied } from '@/components/ui/patterns'
 import { SkeletonTable } from '@/components/ui/skeleton'
 import { SignInPage } from '@/features/auth/SignInPage'
+import { MarketingShell } from '@/features/marketing/shared'
+import { Landing } from '@/features/marketing/Landing'
+import { RidersPage, InstitutionsPage, OperatorsPage } from '@/features/marketing/AudiencePages'
+import { PublicNetworkPage, AboutPage, ContactPage } from '@/features/marketing/CompanyPages'
 
 /* Rider */
 import { RiderHome } from '@/features/rider/RiderHome'
@@ -75,7 +79,7 @@ function Guarded({ permission, component: Component }: { permission: Permission;
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session } = useAuth()
   const location = useLocation()
-  if (!session) return <Navigate to="/" replace state={{ from: location.pathname }} />
+  if (!session) return <Navigate to="/signin" replace state={{ from: location.pathname }} />
   return <AppShell>{children}</AppShell>
 }
 
@@ -94,7 +98,15 @@ export function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={session && role ? <Navigate to={ROLE_HOME[role]} replace /> : <SignInPage />} />
+      {/* Public site */}
+      <Route path="/" element={<MarketingShell><Landing /></MarketingShell>} />
+      <Route path="/riders" element={<MarketingShell><RidersPage /></MarketingShell>} />
+      <Route path="/institutions" element={<MarketingShell><InstitutionsPage /></MarketingShell>} />
+      <Route path="/operators" element={<MarketingShell><OperatorsPage /></MarketingShell>} />
+      <Route path="/network" element={<MarketingShell><PublicNetworkPage /></MarketingShell>} />
+      <Route path="/about" element={<MarketingShell><AboutPage /></MarketingShell>} />
+      <Route path="/contact" element={<MarketingShell><ContactPage /></MarketingShell>} />
+      <Route path="/signin" element={session && role ? <Navigate to={ROLE_HOME[role]} replace /> : <SignInPage />} />
 
       {/* Rider Lite */}
       <Route path="/rider" element={guarded('rider.book', RiderHome)} />

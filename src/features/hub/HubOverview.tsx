@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { AlertTriangle, ArrowRight, BadgeCheck, Banknote, Bus, Clock, Users } from 'lucide-react'
+import { AlertTriangle, ArrowRight, BadgeCheck, Banknote, Bus, Clock, Users } from '@/components/icons'
 import { useDb } from '@/db/store'
 import { useAssignedHub, useOpenCashSession, useServiceDate } from '@/hooks/use-damov'
 import { Badge } from '@/components/ui/badge'

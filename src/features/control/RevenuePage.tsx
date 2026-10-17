@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip as ChartTooltip, XAxis, YAxis } from 'recharts'
-import { Banknote, CreditCard, Landmark, Wallet } from 'lucide-react'
+import { Banknote, CreditCard, Landmark, Wallet } from '@/components/icons'
 import { useDb } from '@/db/store'
 import { useConfig, useServiceDate } from '@/hooks/use-damov'
 import { Badge } from '@/components/ui/badge'

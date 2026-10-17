@@ -1,4 +1,4 @@
-import { Download, FileText } from 'lucide-react'
+import { Download, FileText } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

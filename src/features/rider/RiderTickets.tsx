@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, MapPin, Ticket as TicketIcon } from 'lucide-react'
+import { ChevronLeft, ChevronRight, MapPin, Ticket as TicketIcon } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'
@@ -79,7 +79,7 @@ export function RiderTickets() {
       <motion.div key={current.ticket.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <Card className="overflow-hidden">
           {/* Stub */}
-          <div className="forest-gradient px-5 py-4 text-white">
+          <div className="ink-gradient px-5 py-4 text-white">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-2xs uppercase tracking-wide text-white/60">{current.route.code} · {current.route.public_name}</p>

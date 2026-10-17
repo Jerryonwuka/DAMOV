@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { FlaskConical } from 'lucide-react'
+import { FlaskConical } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { ROLE_HOME, ROLE_LABELS } from '@/auth/permissions'
 import { useDb } from '@/db/store'
@@ -9,7 +9,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown'
-import { ChevronsUpDown } from 'lucide-react'
+import { ChevronsUpDown } from '@/components/icons'
 
 const ENABLED = import.meta.env.VITE_ENABLE_ROLE_SWITCHER !== 'false'
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Send, ShieldCheck, Trash2 } from 'lucide-react'
+import { Plus, Send, ShieldCheck, Trash2 } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'

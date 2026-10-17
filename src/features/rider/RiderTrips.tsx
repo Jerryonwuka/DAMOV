@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { CalendarClock, X } from 'lucide-react'
+import { CalendarClock, X } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { Button } from '@/components/ui/button'

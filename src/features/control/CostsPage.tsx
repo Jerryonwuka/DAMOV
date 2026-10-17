@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip as ChartTooltip } from 'recharts'
-import { Coins, Plus, TrendingDown, TrendingUp } from 'lucide-react'
+import { Coins, Plus, TrendingDown, TrendingUp } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useConfig, useServiceDate } from '@/hooks/use-damov'

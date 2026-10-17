@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Banknote, CheckCircle2, CreditCard, Gift, Printer, Search, UserPlus, Wallet } from 'lucide-react'
+import { Banknote, CheckCircle2, CreditCard, Gift, Printer, Search, UserPlus, Wallet } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useAssignedHub, useOpenCashSession, useServiceDate } from '@/hooks/use-damov'

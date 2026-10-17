@@ -10,18 +10,18 @@ const TRIP_TONE: Record<TripStatus, Tone> = {
   boarding: 'warning',
   departed: 'primary',
   in_service: 'primary',
-  completed: 'forest',
+  completed: 'ink',
   cancelled: 'critical',
   held: 'warning',
 }
 
 const BOOKING_TONE: Record<BookingStatus, Tone> = {
   pending: 'neutral', held: 'warning', confirmed: 'info', checked_in: 'info', boarded: 'primary',
-  completed: 'forest', cancelled: 'critical', expired: 'neutral', no_show: 'warning', refunded: 'critical',
+  completed: 'ink', cancelled: 'critical', expired: 'neutral', no_show: 'warning', refunded: 'critical',
 }
 
 const VEHICLE_TONE: Record<VehicleStatus, Tone> = {
-  available: 'forest', assigned: 'info', operating: 'primary', charging: 'warning',
+  available: 'ink', assigned: 'info', operating: 'primary', charging: 'warning',
   maintenance: 'warning', out_of_service: 'critical',
 }
 

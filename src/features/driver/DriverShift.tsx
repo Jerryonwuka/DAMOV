@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { CheckCircle2, Clock, Route, Users } from 'lucide-react'
+import { CheckCircle2, Clock, Route, Users } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useServiceDate } from '@/hooks/use-damov'

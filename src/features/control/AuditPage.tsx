@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { ScrollText, ShieldAlert } from 'lucide-react'
+import { ScrollText, ShieldAlert } from '@/components/icons'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useCallback } from 'react'
-import { ArrowRight, Bell, Compass, MapPin, ShieldCheck, Ticket, TrendingUp } from 'lucide-react'
+import { ArrowRight, Bell, Compass, MapPin, ShieldCheck, Ticket, TrendingUp } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useRiderProfile, useOrganization, useServiceDate } from '@/hooks/use-damov'
@@ -71,7 +71,7 @@ export function RiderHome() {
   return (
     <div className="space-y-5">
       {/* Greeting */}
-      <div className="forest-gradient relative overflow-hidden rounded-2xl p-5 text-white sm:p-6">
+      <div className="ink-gradient relative overflow-hidden rounded-2xl p-5 text-white sm:p-6">
         <div className="surface-grid pointer-events-none absolute inset-0 opacity-[0.07]" />
         <div className="relative">
           <p className="text-sm text-white/70">{lagosDate(new Date().toISOString())}</p>

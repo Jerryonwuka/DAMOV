@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { AlertTriangle, Plus } from 'lucide-react'
+import { AlertTriangle, Plus } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useServiceDate } from '@/hooks/use-damov'
@@ -135,7 +135,7 @@ export function IncidentCentre() {
     { key: 'description', header: 'Description', value: (r) => r.incident.description, cell: (r) => <span className="line-clamp-1 max-w-md">{r.incident.description}</span> },
     { key: 'trip', header: 'Trip', value: (r) => r.trip_code ?? '', cell: (r) => r.trip_code ?? '—', hideable: true },
     { key: 'vehicle', header: 'Vehicle', value: (r) => r.vehicle ?? '', cell: (r) => r.vehicle ?? '—', hideable: true },
-    { key: 'status', header: 'Status', value: (r) => r.incident.status, cell: (r) => <Badge tone={['resolved', 'closed'].includes(r.incident.status) ? 'forest' : 'warning'}>{titleCase(r.incident.status)}</Badge> },
+    { key: 'status', header: 'Status', value: (r) => r.incident.status, cell: (r) => <Badge tone={['resolved', 'closed'].includes(r.incident.status) ? 'ink' : 'warning'}>{titleCase(r.incident.status)}</Badge> },
     { key: 'reported', header: 'Reported', value: (r) => r.incident.reported_at, cell: (r) => relative(r.incident.reported_at) },
   ]
 

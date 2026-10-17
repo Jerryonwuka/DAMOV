@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   AlertTriangle, ArrowLeftRight, ArrowRight, Calendar, CheckCircle2, CreditCard, Loader2, MapPin, Users,
-} from 'lucide-react'
+} from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useServiceDate } from '@/hooks/use-damov'
@@ -162,7 +162,7 @@ export function RiderBook() {
               className={cn(
                 'grid size-6 shrink-0 place-items-center rounded-full text-2xs font-bold transition-colors duration-300',
                 index < stepIndex && 'bg-primary text-primary-foreground',
-                index === stepIndex && 'bg-forest-700 text-white dark:bg-primary dark:text-primary-foreground',
+                index === stepIndex && 'bg-ink-700 text-white dark:bg-primary dark:text-primary-foreground',
                 index > stepIndex && 'bg-muted text-muted-foreground',
               )}
             >

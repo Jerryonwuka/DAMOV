@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AlertTriangle, ArrowRight, Bus, Clock, MapPin, User } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Bus, Clock, MapPin, User } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'

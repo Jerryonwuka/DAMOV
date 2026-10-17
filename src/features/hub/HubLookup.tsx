@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Search, Ticket, UserRound } from 'lucide-react'
+import { Search, Ticket, UserRound } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'

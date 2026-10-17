@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip as ChartTooltip, XAxis, YAxis } from 'recharts'
-import { ArrowRight, Building2, CreditCard, ShieldCheck, TrendingUp, Users } from 'lucide-react'
+import { ArrowRight, Building2, CreditCard, ShieldCheck, TrendingUp, Users } from '@/components/icons'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Columns3, Download, Search } from 'lucide-react'
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Columns3, Download, Search } from '@/components/icons'
 import { cn, downloadCsv, sortBy } from '@/lib/utils'
 import { lagosFullDateTime } from '@/lib/format'
 import { Button } from './button'
@@ -24,6 +24,8 @@ export interface Column<T> {
   /** Dense operational tables let users hide columns they don't need. */
   hideable?: boolean
   defaultHidden?: boolean
+  /** Long prose cells opt into wrapping; everything else stays on one line. */
+  wrap?: boolean
 }
 
 interface DataTableProps<T> {
@@ -163,17 +165,17 @@ export function DataTable<T>({
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
+      <div className="glass overflow-hidden rounded-2xl border border-border">
         <div className="max-h-[70vh] overflow-auto">
           <table className="w-full border-collapse text-sm">
             <thead className={cn(stickyHeader && 'sticky top-0 z-10')}>
-              <tr className="border-b border-border bg-muted/70 backdrop-blur">
+              <tr className="border-b border-border bg-card/95 backdrop-blur">
                 {visibleColumns.map((column) => (
                   <th
                     key={column.key}
                     style={{ width: column.width }}
                     className={cn(
-                      'whitespace-nowrap px-3 py-2.5 text-2xs font-semibold uppercase tracking-wide text-muted-foreground',
+                      'whitespace-nowrap px-3 py-2.5 text-xs font-medium text-muted-foreground',
                       column.align === 'right' && 'text-right',
                       column.align === 'center' && 'text-center',
                       !column.align && 'text-left',
@@ -228,8 +230,8 @@ export function DataTable<T>({
                       onRowClick ? (e) => (e.key === 'Enter' ? onRowClick(row) : undefined) : undefined
                     }
                     className={cn(
-                      'border-b border-border/70 transition-colors last:border-0',
-                      onRowClick && 'cursor-pointer hover:bg-accent/60 focus-visible:bg-accent/60 focus-visible:outline-none',
+                      'border-b border-border/60 transition-colors last:border-0',
+                      onRowClick && 'cursor-pointer hover:bg-primary/[0.06] focus-visible:bg-primary/[0.06] focus-visible:outline-none',
                     )}
                   >
                     {visibleColumns.map((column) => (
@@ -237,6 +239,7 @@ export function DataTable<T>({
                         key={column.key}
                         className={cn(
                           'px-3 align-middle',
+                          column.wrap ? 'max-w-md' : 'whitespace-nowrap',
                           dense ? 'py-1.5' : 'py-2.5',
                           column.align === 'right' && 'text-right tnum',
                           column.align === 'center' && 'text-center',

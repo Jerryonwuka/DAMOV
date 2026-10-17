@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/auth/AuthProvider'
 import { TooltipProvider } from '@/components/ui/misc'
+import { IconContext } from '@/components/icons'
 import { DamovLogo } from '@/components/brand'
 import { buildSeed } from '@/data/seed'
 import { store } from '@/db/store'
@@ -29,13 +30,17 @@ export default function App() {
       <BrowserRouter>
         <AuthProvider>
           <TooltipProvider delayDuration={250}>
-            <AppRoutes />
+            <IconContext.Provider value={{ weight: 'duotone' }}>
+              <AppRoutes />
+            </IconContext.Provider>
             <Toaster
               position="top-right"
               theme={theme}
-              richColors
               closeButton
-              toastOptions={{ className: 'rounded-xl border-border shadow-lifted' }}
+              toastOptions={{
+                className: 'glass rounded-xl border border-border text-foreground shadow-lifted',
+                classNames: { description: 'text-muted-foreground' },
+              }}
             />
           </TooltipProvider>
         </AuthProvider>
@@ -46,11 +51,11 @@ export default function App() {
 
 function BootScreen() {
   return (
-    <div className="forest-gradient grid min-h-screen place-items-center text-white">
+    <div className="ink-gradient grid min-h-screen place-items-center text-white">
       <div className="flex flex-col items-center gap-5">
         <DamovLogo size="lg" className="animate-rise-in" />
-        <div className="h-1 w-40 overflow-hidden rounded-full bg-white/15">
-          <div className="h-full w-1/3 animate-[shimmer_1.2s_ease-in-out_infinite] rounded-full bg-primary" />
+        <div className="h-1 w-40 overflow-hidden rounded-full bg-white/10">
+          <div className="h-full w-1/3 animate-[shimmer_1.2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-primary-300 to-emerald-400" />
         </div>
         <p className="text-xs tracking-wide text-white/60">Preparing the Abuja operating day…</p>
       </div>

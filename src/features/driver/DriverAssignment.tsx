@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Bus, CheckCircle2, ClipboardCheck, Clock, Gauge, MapPin, ShieldAlert, Users } from 'lucide-react'
+import { ArrowRight, Bus, CheckCircle2, ClipboardCheck, Clock, Gauge, MapPin, ShieldAlert, Users } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -25,7 +25,7 @@ export function DriverAssignment() {
 
   return (
     <div className="mx-auto max-w-lg space-y-4">
-      <div className="forest-gradient relative overflow-hidden rounded-2xl p-5 text-white">
+      <div className="ink-gradient relative overflow-hidden rounded-2xl p-5 text-white">
         <div className="surface-grid pointer-events-none absolute inset-0 opacity-[0.07]" />
         <div className="relative">
           <p className="text-sm text-white/70">{lagosDate(new Date().toISOString())}</p>
@@ -75,7 +75,7 @@ export function DriverAssignment() {
             </Button>
           )}
           {!shift.inspection?.passed && shift.vehicle && (
-            <Button asChild size="lg" variant="forest" className="mt-2 w-full">
+            <Button asChild size="lg" variant="ink" className="mt-2 w-full">
               <Link to="/driver/inspection"><ClipboardCheck className="size-4" /> Start pre-trip inspection</Link>
             </Button>
           )}

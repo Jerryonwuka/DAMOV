@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Activity } from 'lucide-react'
+import { Activity } from '@/components/icons'
 import { useDb } from '@/db/store'
 import { DataTable, type Column } from '@/components/ui/data-table'
 import { PageHeader, StatTile } from '@/components/ui/patterns'

@@ -10,7 +10,8 @@ function resolveInitial(): Theme {
   } catch {
     /* storage unavailable */
   }
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  // Dark is the operating surface; light is opted into, not inherited from the OS.
+  return 'dark'
 }
 
 export function useTheme() {
