@@ -1,4 +1,4 @@
-import { CreditCard, Landmark, TrendingDown } from 'lucide-react'
+import { CreditCard, Landmark, TrendingDown } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/misc'
 import { DefinitionRow, EmptyState, PageHeader, StatTile } from '@/components/ui/patterns'

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Banknote, CheckCircle2, Lock, ShieldQuestion, Wallet } from 'lucide-react'
+import { Banknote, CheckCircle2, Lock, ShieldQuestion, Wallet } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useAssignedHub, useConfig, useOpenCashSession } from '@/hooks/use-damov'

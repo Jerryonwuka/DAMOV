@@ -10,6 +10,7 @@ import { releaseSegments, reserveSegments } from './capacity'
 import { quoteBookingUnsafe } from './fares'
 import { DomainError, guard, type Result } from './result'
 import { queueNotification } from './notifications'
+import { getConfigNumber } from './configuration'
 
 export interface CreateBookingInput {
   trip_id: UUID
@@ -58,8 +59,10 @@ export function createBookingAndReserveCapacity(input: CreateBookingInput): Resu
       if (!trip) throw new DomainError('trip_not_found', 'Trip not found.')
       if (['cancelled', 'completed'].includes(trip.status))
         throw new DomainError('trip_closed', `This departure is ${trip.status} and cannot be booked.`)
-      if (new Date(trip.scheduled_departure_at).getTime() < Date.now() - 15 * 60_000)
-        throw new DomainError('departure_passed', 'This departure has already left.')
+      // A departure stays bookable exactly as long as its gate stays open.
+      const closeAfter = getConfigNumber(draft, 'boarding.window_close_minutes', 5)
+      if (new Date(trip.scheduled_departure_at).getTime() < Date.now() - closeAfter * 60_000)
+        throw new DomainError('departure_passed', 'Boarding for this departure has closed.')
 
       const rider = draft.profiles.find((p) => p.id === input.rider_id)
       if (!rider) throw new DomainError('rider_not_found', 'Passenger record not found.')

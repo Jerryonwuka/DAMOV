@@ -1,20 +1,29 @@
 import { EMPTY_DB, type DamovDatabase } from '@/db/schema'
-import { bookingReference, qrToken, ticketCode, uuid } from '@/lib/ids'
+import { bookingReference, qrToken, shortCode, ticketCode } from '@/lib/ids'
 import { lagosToday } from '@/lib/format'
 import { distanceAlongLineKm, lineLengthKm } from '@/lib/geo'
 import { mulberry32 } from '@/lib/utils'
 import type {
-  Booking, ConfigurationValue, CostCategory, Hub, Organization, Profile, Role, Route,
+  Booking, ConfigurationValue, CostCategory, Hub, Incident, Organization, Profile, Role, Route,
   RouteGeometryVersion, Stop, Ticket, Trip, UUID, VehicleStatus,
 } from '@/lib/types'
 import { materialiseTrips } from '@/server/trips'
-import { reserveSegments } from '@/server/capacity'
-import { quoteBookingUnsafe } from '@/server/fares'
 import referenceRoutes from './geo/routes.json'
 import referenceStops from './geo/stops.json'
 import referenceHubs from './geo/hubs.json'
 
 const rand = mulberry32(19_770_101)
+
+/**
+ * Compact ids for seeded rows. The schema's ids are opaque strings; the seed
+ * carries tens of thousands of rows into IndexedDB, so twelve characters beat
+ * a thirty-six character UUID without changing anything that reads them.
+ */
+let sequence = 0
+function uuid() {
+  sequence += 1
+  return `${shortCode(8).toLowerCase()}${sequence.toString(36)}`
+}
 const pick = <T>(items: T[]): T => items[Math.floor(rand() * items.length)]
 const chance = (p: number) => rand() < p
 
@@ -46,10 +55,15 @@ export function buildSeed(): DamovDatabase {
   const ministry = org('Federal Ministry of Transportation', 'FMoT', 'ministry', 'FMOT')
   const operator = org('Damov Fleet Operations', 'Damov Fleet', 'operator', 'DFO')
   const school = org('Veritas Group of Schools', 'Veritas', 'school', 'VGS')
+  const company = org('Zenith Hub Technologies', 'Zenith Hub', 'company', 'ZHT')
+  company.primary_contact_name = 'Kemi Oladipo'
+  company.primary_contact_email = 'people@zenithhub.africa'
+  school.primary_contact_name = 'Mr. Chidi Anozie'
+  school.primary_contact_email = 'bursary@veritasschools.ng'
   ministry.primary_contact_name = 'Hajiya Amina Bello'
   ministry.primary_contact_phone = '08034451207'
   ministry.primary_contact_email = 'transport.programme@fmot.gov.ng'
-  db.organizations = [damov, ministry, operator, school]
+  db.organizations = [damov, ministry, operator, school, company]
 
   /* --- Reference GIS import ----------------------------------------- */
   const hubBySource = new Map<string, Hub>()
@@ -148,7 +162,9 @@ export function buildSeed(): DamovDatabase {
     { fleet: 'DMV-003', reg: 'ABJ-338-KU', type: evType.id, status: 'available', hub: cbdHub.id },
     { fleet: 'DMV-004', reg: 'ABJ-449-KU', type: evType.id, status: 'available', hub: cbdHub.id },
     { fleet: 'DMV-005', reg: 'ABJ-551-KU', type: cngType.id, status: 'available', hub: kubwaHub.id },
-    { fleet: 'DMV-006', reg: 'ABJ-662-KU', type: cngType.id, status: 'charging', hub: depot.id },
+    { fleet: 'DMV-006', reg: 'ABJ-662-KU', type: evType.id, status: 'available', hub: kubwaHub.id },
+    { fleet: 'DMV-009', reg: 'ABJ-995-KU', type: evType.id, status: 'available', hub: mararabaHub.id },
+    { fleet: 'DMV-010', reg: 'ABJ-106-KU', type: cngType.id, status: 'charging', hub: depot.id },
     { fleet: 'DMV-007', reg: 'ABJ-773-KU', type: evType.id, status: 'maintenance', hub: depot.id },
     { fleet: 'DMV-008', reg: 'ABJ-884-KU', type: cngType.id, status: 'out_of_service', hub: depot.id },
   ]
@@ -181,13 +197,13 @@ export function buildSeed(): DamovDatabase {
   const opsManager = addProfile('Ngozi Eze', '08030000002', 'operations_manager', damov.id, { email: 'ngozi.eze@damov.ng', employment_id: 'DMV-OM-04' })
   const dispatcher = addProfile('Ibrahim Sani', '08030000003', 'dispatcher', damov.id, { email: 'ibrahim.sani@damov.ng', employment_id: 'DMV-DP-11' })
   const finance = addProfile('Blessing Okafor', '08030000004', 'finance_officer', damov.id, { email: 'blessing.okafor@damov.ng', employment_id: 'DMV-FN-02' })
-  addProfile('Musa Danjuma', '08030000005', 'supervisor', damov.id, { email: 'musa.danjuma@damov.ng', hub_id: mararabaHub.id, employment_id: 'DMV-SV-07' })
+  const supervisorProfile = addProfile('Musa Danjuma', '08030000005', 'supervisor', damov.id, { email: 'musa.danjuma@damov.ng', hub_id: mararabaHub.id, employment_id: 'DMV-SV-07' })
   const agentMararaba = addProfile('Chiamaka Nwosu', '08030000006', 'hub_agent', damov.id, { hub_id: mararabaHub.id, employment_id: 'DMV-HA-21' })
   const agentCbd = addProfile('Yakubu Idris', '08030000007', 'hub_agent', damov.id, { hub_id: cbdHub.id, employment_id: 'DMV-HA-22' })
   const institutionAdmin = addProfile('Amina Bello', '08030000008', 'institution_admin', ministry.id, { email: 'amina.bello@fmot.gov.ng', employment_id: 'FMOT-ADM-3' })
   addProfile('Dr. Femi Adeyemi', '08030000009', 'executive_viewer', damov.id, { email: 'femi.adeyemi@damov.ng' })
 
-  const driverNames = ['Samuel Ojo', 'Aliyu Garba', 'Peter Uche', 'Hauwa Lawal', 'Emeka Obi', 'Joseph Terver']
+  const driverNames = ['Samuel Ojo', 'Aliyu Garba', 'Peter Uche', 'Hauwa Lawal', 'Emeka Obi', 'Joseph Terver', 'Grace Okoye', 'Ibrahim Waziri']
   const drivers = driverNames.map((name, i) => {
     const profile = addProfile(name, `0805000000${i + 1}`, 'driver', operator.id, { hub_id: i % 2 ? cbdHub.id : mararabaHub.id, employment_id: `DFO-DR-${10 + i}` })
     db.driver_profiles.push({
@@ -217,28 +233,33 @@ export function buildSeed(): DamovDatabase {
   const firstNames = ['Adaeze', 'Bashir', 'Chinedu', 'Damilola', 'Efe', 'Fatima', 'Gbenga', 'Hadiza', 'Ifeanyi', 'Jumoke', 'Kabiru', 'Lola', 'Musa', 'Nkechi', 'Obinna', 'Peju', 'Rukayat', 'Sadiq', 'Titi', 'Uche', 'Yemi', 'Zara', 'Emeka', 'Ngozi', 'Tunde', 'Amaka', 'Sani', 'Bisi', 'Kunle', 'Ronke']
   const lastNames = ['Okonkwo', 'Abdullahi', 'Adewale', 'Eze', 'Bello', 'Okoro', 'Ibrahim', 'Adeyemi', 'Nwachukwu', 'Garba', 'Olawale', 'Umar', 'Chukwu', 'Danladi', 'Ojo', 'Yusuf', 'Anyanwu', 'Lawal', 'Igwe', 'Musa']
   const generatedNames: string[] = []
-  for (let i = 0; i < 380; i++) generatedNames.push(`${firstNames[i % firstNames.length]} ${lastNames[Math.floor(i / firstNames.length) % lastNames.length]}${i >= firstNames.length * lastNames.length ? ` ${i}` : ''}`)
+  for (let i = 0; i < 900; i++) generatedNames.push(`${firstNames[i % firstNames.length]} ${lastNames[Math.floor(i / firstNames.length) % lastNames.length]}${i >= firstNames.length * lastNames.length ? ` ${i}` : ''}`)
   const allRiderNames = [...riderNames, ...generatedNames]
 
   const riders = allRiderNames.map((name, i) => {
-    const sponsored = i < 12 || (i >= riderNames.length && i % 5 !== 0)
+    // Named demo passengers 0–11 ride on the ministry programme; the generated
+    // population splits between the ministry, a company, a school and the public.
+    const generated = i >= riderNames.length
+    const sponsor =
+      i < 12 ? ministry : !generated ? null : i % 10 === 0 ? company : i % 10 === 5 ? school : i % 2 === 1 ? null : ministry
+    const sponsored = Boolean(sponsor)
     const phone = i < riderNames.length ? `0807${String(1_000_000 + i * 13_577).slice(0, 7)}` : `0810${String(2_000_000 + i * 7_919).slice(0, 7)}`
-    const profile = addProfile(name, phone, 'rider', sponsored ? ministry.id : null)
-    const staffId = sponsored ? `FMOT/${2018 + (i % 7)}/${String(1400 + i)}` : null
+    const profile = addProfile(name, phone, 'rider', sponsor?.id ?? null)
+    const staffId = sponsor ? `${sponsor.code}/${2018 + (i % 7)}/${String(1400 + i)}` : null
     db.rider_profiles.push({
-      id: uuid(), profile_id: profile.id, organization_id: sponsored ? ministry.id : null,
+      id: uuid(), profile_id: profile.id, organization_id: sponsor?.id ?? null,
       staff_id: staffId,
       eligibility_state: sponsored ? (i === 11 ? 'pending' : 'verified') : 'unverified',
       verification_method: sponsored ? 'staff_list_import' : 'none',
       emergency_contact_name: null, emergency_contact_phone: null, created_at: now,
     })
-    if (sponsored) {
+    if (sponsor) {
       db.eligibility_records.push({
-        id: uuid(), rider_id: profile.id, organization_id: ministry.id, staff_id: staffId!,
+        id: uuid(), rider_id: profile.id, organization_id: sponsor.id, staff_id: staffId!,
         full_name: name, phone: profile.phone,
         status: i === 11 ? 'pending' : 'active',
         valid_from: '2026-01-01', valid_to: '2026-12-31',
-        import_batch: 'FMOT-2026-Q1', verified_at: i === 11 ? null : now,
+        import_batch: `${sponsor.code}-2026-Q1`, verified_at: i === 11 ? null : now,
         verified_by: i === 11 ? null : institutionAdmin.id,
       })
     }
@@ -382,7 +403,26 @@ export function buildSeed(): DamovDatabase {
     programme_budget: 14_000_000, budget_consumed: 0,
     status: 'published' as const, version: 2, created_at: now,
   }
-  db.subsidy_policies = [subsidy]
+  const companySubsidy = {
+    id: uuid(), name: 'Zenith Hub Commute Benefit', organization_id: company.id,
+    route_ids: null, direction_codes: null, days_of_week: null, time_bands: null,
+    max_trips_per_day: 2, max_trips_per_week: null, max_trips_per_month: 48,
+    subsidy_type: 'percentage' as const, fixed_amount: null, percentage: 60, max_subsidy_per_trip: 500,
+    valid_from: '2026-03-01', valid_to: '2027-02-28',
+    programme_budget: 4_500_000, budget_consumed: 0,
+    status: 'published' as const, version: 1, created_at: now,
+  }
+  const schoolSubsidy = {
+    id: uuid(), name: 'Veritas Staff Shuttle Support', organization_id: school.id,
+    route_ids: [pilot.route.id], direction_codes: null, days_of_week: [1, 2, 3, 4, 5],
+    time_bands: [{ start: '05:30', end: '08:30' }, { start: '14:30', end: '18:30' }],
+    max_trips_per_day: 2, max_trips_per_week: 10, max_trips_per_month: null,
+    subsidy_type: 'fixed' as const, fixed_amount: 200, percentage: null, max_subsidy_per_trip: 200,
+    valid_from: '2026-01-12', valid_to: '2026-12-18',
+    programme_budget: 1_800_000, budget_consumed: 0,
+    status: 'published' as const, version: 3, created_at: now,
+  }
+  db.subsidy_policies = [subsidy, companySubsidy, schoolSubsidy]
 
   /* --- Calendars, schedules and trips -------------------------------- */
   const weekdays = {
@@ -410,7 +450,13 @@ export function buildSeed(): DamovDatabase {
       explicit_departure_times: null, default_vehicle_type_id: evType.id, active: true,
     })
   }
-  for (const date of [yesterday, today]) {
+  // Two weeks of service so trends, deltas and route economics have a past to
+  // compare against. Older days carry lighter loads to keep the dataset lean.
+  const historyDates = Array.from({ length: 10 }, (_, i) => shiftDays(today, i - 9))
+  // Tomorrow and the day after are generated too, so a passenger opening the
+  // app in the evening still has departures to book and dispatch has work.
+  const serviceDates = [...historyDates, shiftDays(today, 1), shiftDays(today, 2)]
+  for (const date of serviceDates) {
     for (const template of db.schedule_templates) {
       const calendar = db.service_calendars.find((c) => c.id === template.service_calendar_id)!
       const dow = new Date(`${date}T12:00:00Z`).getUTCDay()
@@ -527,17 +573,61 @@ export function buildSeed(): DamovDatabase {
     variance: null, variance_explanation: null, status: 'open' as const,
     supervisor_id: null, reviewed_at: null, supervisor_note: null,
   }
-  db.cash_sessions = [openSession, closedSession]
+  const historicSessions = historyDates.slice(0, -2).map((date, i) => ({
+    id: uuid(), hub_id: i % 2 ? mararabaHub.id : cbdHub.id, agent_id: i % 2 ? agentMararaba.id : agentCbd.id,
+    opened_at: isoAt(date, '05:30'), closed_at: isoAt(date, '20:40') as string | null,
+    opening_float: 20_000 + (i % 3) * 5_000, expected_cash: 0, declared_cash: null as number | null,
+    variance: null as number | null, variance_explanation: null as string | null,
+    status: 'open' as 'open' | 'approved' | 'rejected', supervisor_id: null as string | null,
+    reviewed_at: null as string | null, supervisor_note: null as string | null,
+  }))
+  const sessionForDate = new Map<string, string>(historyDates.slice(0, -2).map((date, i) => [date, historicSessions[i].id]))
+  sessionForDate.set(yesterday, closedSession.id)
+  sessionForDate.set(today, openSession.id)
+  db.cash_sessions = [openSession, closedSession, ...historicSessions]
   db.cash_transactions = [
     { id: uuid(), cash_session_id: openSession.id, booking_id: null, payment_id: null, amount: openSession.opening_float, type: 'float_in', occurred_at: openSession.opened_at, reversal_of: null },
     { id: uuid(), cash_session_id: closedSession.id, booking_id: null, payment_id: null, amount: closedSession.opening_float, type: 'float_in', occurred_at: closedSession.opened_at, reversal_of: null },
+    ...historicSessions.map((session) => ({ id: uuid(), cash_session_id: session.id, booking_id: null, payment_id: null, amount: session.opening_float, type: 'float_in' as const, occurred_at: session.opened_at, reversal_of: null })),
   ]
 
   /* --- Bookings, payments, boardings ---------------------------------- */
+  //
+  // The seed writes bookings through indexed fast paths rather than the
+  // production engine: with fourteen days of service the engine's per-call
+  // table scans would take minutes. The pricing and capacity rules mirror
+  // `server/fares.ts` and `server/capacity.ts`; the live flows still exercise
+  // the real engine on every booking made in the app.
+  const stopsByDirection = new Map<string, typeof db.route_stops>()
+  for (const rs of db.route_stops) {
+    if (!stopsByDirection.has(rs.route_direction_id)) stopsByDirection.set(rs.route_direction_id, [])
+    stopsByDirection.get(rs.route_direction_id)!.push(rs)
+  }
+  for (const list of stopsByDirection.values()) list.sort((a, b) => a.sequence - b.sequence)
+  const segmentsByDirection = new Map<string, typeof db.route_segments>()
+  for (const seg of db.route_segments) {
+    if (!segmentsByDirection.has(seg.route_direction_id)) segmentsByDirection.set(seg.route_direction_id, [])
+    segmentsByDirection.get(seg.route_direction_id)!.push(seg)
+  }
+  for (const list of segmentsByDirection.values()) list.sort((a, b) => a.sequence - b.sequence)
+  const inventoryByTrip = new Map<string, Map<string, (typeof db.trip_segment_inventory)[number]>>()
+  for (const row of db.trip_segment_inventory) {
+    if (!inventoryByTrip.has(row.trip_id)) inventoryByTrip.set(row.trip_id, new Map())
+    inventoryByTrip.get(row.trip_id)!.set(row.route_segment_id, row)
+  }
+  const directionById = new Map(db.route_directions.map((d) => [d.id, d]))
+  const riderById = new Map(db.rider_profiles.map((r) => [r.profile_id, r]))
+  const orgById = new Map(db.organizations.map((o) => [o.id, o]))
+  const policyByOrg = new Map(db.subsidy_policies.filter((p) => p.status === 'published').map((p) => [p.organization_id, p]))
+  const sponsoredTripsPerDay = new Map<string, number>() // `${rider}|${date}`
+  const sessionById = new Map(db.cash_sessions.map((c) => [c.id, c]))
+  const bookingsByTrip = new Map<string, Booking[]>()
+  const cardTakingsByTrip = new Map<string, { amount: number; count: number }>()
+
   function seedBooking(trip: Trip, riderProfile: Profile, options: { channel: Booking['booking_channel']; method: 'cash' | 'card'; sessionId?: UUID }) {
-    const routeStops = db.route_stops
-      .filter((rs) => rs.route_direction_id === trip.route_direction_id)
-      .sort((a, b) => a.sequence - b.sequence)
+    const routeStops = stopsByDirection.get(trip.route_direction_id)!
+    const segments = segmentsByDirection.get(trip.route_direction_id)!
+    const inventory = inventoryByTrip.get(trip.id)!
     // Two-thirds ride the full corridor; the rest hop off midway, which is what
     // makes intermediate-segment capacity matter.
     const originIndex = chance(0.72) ? 0 : Math.floor(rand() * (routeStops.length - 2))
@@ -548,43 +638,63 @@ export function buildSeed(): DamovDatabase {
     const origin = routeStops[originIndex]
     const destination = routeStops[destinationIndex]
 
-    let quote
-    try {
-      quote = quoteBookingUnsafe(db, {
-        trip_id: trip.id, origin_route_stop_id: origin.id,
-        destination_route_stop_id: destination.id, rider_id: riderProfile.id,
-      })
-    } catch {
-      return null
+    // Capacity: every segment between origin and destination must have a seat.
+    const needed = segments.slice(originIndex, destinationIndex).map((seg) => inventory.get(seg.id)!)
+    if (needed.some((row) => row.capacity - row.reserved_count - row.boarded_adjustment <= 0)) return null
+    for (const row of needed) {
+      row.reserved_count += 1
+      row.version += 1
     }
 
-    let heldIds: string[]
-    try {
-      heldIds = reserveSegments(db, trip.id, origin.id, destination.id)
-    } catch {
-      return null // segment full — exactly what the engine is meant to do
+    // Fare: distance policy, ₦25/km rounded to ₦50, ₦200 minimum.
+    const distanceKm = Math.max(0.5, destination.distance_from_start_km - origin.distance_from_start_km)
+    const gross = Math.max(farePolicy.minimum_amount ?? 0, Math.round((farePolicy.per_km_amount ?? 0) * distanceKm / 50) * 50)
+
+    // Subsidy: the rider's organisation policy, evaluated against day, time band and the daily cap.
+    const rider = riderById.get(riderProfile.id)
+    const policy = rider?.organization_id && rider.eligibility_state === 'verified' ? policyByOrg.get(rider.organization_id) : undefined
+    const direction = directionById.get(trip.route_direction_id)!
+    const dow = new Date(`${trip.service_date}T12:00:00Z`).getUTCDay()
+    const departureTime = new Date(trip.scheduled_departure_at).toLocaleTimeString('en-GB', { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit' })
+    const capKey = `${riderProfile.id}|${trip.service_date}`
+    let subsidy = 0
+    let explanation: string | null = null
+    if (policy) {
+      const org = orgById.get(policy.organization_id)!
+      const routeOk = !policy.route_ids?.length || policy.route_ids.includes(direction.route_id)
+      const dayOk = !policy.days_of_week?.length || policy.days_of_week.includes(dow)
+      const bandOk = !policy.time_bands?.length || policy.time_bands.some((b) => departureTime >= b.start && departureTime <= b.end)
+      const capOk = !policy.max_trips_per_day || (sponsoredTripsPerDay.get(capKey) ?? 0) < policy.max_trips_per_day
+      if (routeOk && dayOk && bandOk && capOk) {
+        subsidy = policy.subsidy_type === 'fixed' ? (policy.fixed_amount ?? 0) : Math.round((gross * (policy.percentage ?? 0)) / 100)
+        if (policy.max_subsidy_per_trip) subsidy = Math.min(subsidy, policy.max_subsidy_per_trip)
+        subsidy = Math.min(subsidy, gross)
+        explanation = `Eligible: ${org.short_name} covers ₦${subsidy.toLocaleString('en-NG')}; passenger pays ₦${(gross - subsidy).toLocaleString('en-NG')}.`
+        sponsoredTripsPerDay.set(capKey, (sponsoredTripsPerDay.get(capKey) ?? 0) + 1)
+      } else {
+        explanation = `Not eligible: ${!routeOk ? 'this route is not in the sponsored programme.' : !dayOk ? 'travel day is outside the programme calendar.' : !bandOk ? 'departure is outside programme hours.' : 'daily sponsored-trip limit reached.'}`
+      }
     }
 
-    // Bookings are made ahead of departure, but never in the future relative to now.
-    const createdAt = new Date(
-      Math.min(new Date(trip.scheduled_departure_at).getTime() - (30 + rand() * 600) * 60_000, nowMs - (2 + rand() * 180) * 60_000),
-    ).toISOString()
+    const createdAt = new Date(new Date(trip.scheduled_departure_at).getTime() - (30 + rand() * 600) * 60_000).toISOString()
     const booking: Booking = {
       id: uuid(), booking_reference: bookingReference(), rider_id: riderProfile.id, trip_id: trip.id,
       origin_route_stop_id: origin.id, destination_route_stop_id: destination.id,
       booking_channel: options.channel, status: 'confirmed',
-      gross_fare: quote.gross_fare,
-      passenger_contribution: quote.passenger_contribution,
-      sponsor_contribution: quote.sponsor_contribution,
-      sponsor_id: quote.sponsor_id,
-      fare_policy_snapshot: { ...quote.fare_policy, amount: quote.gross_fare },
-      subsidy_policy_snapshot: quote.subsidy_policy ? { ...quote.subsidy_policy, explanation: quote.explanation } : null,
+      gross_fare: gross, passenger_contribution: gross - subsidy, sponsor_contribution: subsidy,
+      sponsor_id: subsidy > 0 && policy ? policy.organization_id : null,
+      fare_policy_snapshot: { id: farePolicy.id, name: farePolicy.name, version: farePolicy.version, amount: gross },
+      subsidy_policy_snapshot: policy && explanation ? { id: policy.id, name: policy.name, version: policy.version, explanation } : null,
       currency: 'NGN', expires_at: null, idempotency_key: `seed_${uuid()}`,
       created_by: options.channel === 'hub' ? agentMararaba.id : riderProfile.id,
       created_at: createdAt, cancelled_at: null, cancellation_reason: null,
     }
     db.bookings.push(booking)
-    for (const id of heldIds) db.booking_segments.push({ id: uuid(), booking_id: booking.id, trip_segment_inventory_id: id })
+    if (!bookingsByTrip.has(trip.id)) bookingsByTrip.set(trip.id, [])
+    bookingsByTrip.get(trip.id)!.push(booking)
+    // Segment holds only matter for trips that can still be booked.
+    const retainSegments = trip.service_date >= yesterday
+    if (retainSegments) for (const row of needed) db.booking_segments.push({ id: uuid(), booking_id: booking.id, trip_segment_inventory_id: row.id })
 
     if (booking.passenger_contribution > 0) {
       const payment = {
@@ -596,8 +706,14 @@ export function buildSeed(): DamovDatabase {
         cash_session_id: options.method === 'cash' ? (options.sessionId ?? null) : null, created_at: createdAt,
       }
       db.payments.push(payment)
+      if (options.method === 'card') {
+        const takings = cardTakingsByTrip.get(trip.id) ?? { amount: 0, count: 0 }
+        takings.amount += payment.amount
+        takings.count += 1
+        cardTakingsByTrip.set(trip.id, takings)
+      }
       if (options.method === 'cash' && options.sessionId) {
-        const session = db.cash_sessions.find((s) => s.id === options.sessionId)!
+        const session = sessionById.get(options.sessionId)!
         session.expected_cash += booking.passenger_contribution
         db.cash_transactions.push({
           id: uuid(), cash_session_id: session.id, booking_id: booking.id, payment_id: payment.id,
@@ -609,14 +725,15 @@ export function buildSeed(): DamovDatabase {
     const ticket: Ticket = { id: uuid(), booking_id: booking.id, ticket_code: ticketCode(), qr_token: qrToken(), issued_at: createdAt, status: 'issued' }
     db.tickets.push(ticket)
 
-    if (booking.sponsor_contribution > 0 && quote.subsidy_policy && quote.sponsor_id) {
-      db.sponsor_authorizations.push({
-        id: uuid(), booking_id: booking.id, organization_id: quote.sponsor_id,
-        subsidy_policy_id: quote.subsidy_policy.id, amount_reserved: booking.sponsor_contribution,
-        amount_recognized: 0, status: 'reserved', recognized_at: null, created_at: createdAt,
-      })
-      const policy = db.subsidy_policies.find((p) => p.id === quote.subsidy_policy!.id)!
-      policy.budget_consumed += booking.sponsor_contribution
+    let auth: (typeof db.sponsor_authorizations)[number] | null = null
+    if (subsidy > 0 && policy) {
+      auth = {
+        id: uuid(), booking_id: booking.id, organization_id: policy.organization_id,
+        subsidy_policy_id: policy.id, amount_reserved: subsidy, amount_recognized: 0,
+        status: 'reserved', recognized_at: null, created_at: createdAt,
+      }
+      db.sponsor_authorizations.push(auth)
+      policy.budget_consumed += subsidy
     }
 
     // Passengers on a departed trip were validated at the gate.
@@ -624,8 +741,7 @@ export function buildSeed(): DamovDatabase {
       const boardedAt = new Date(new Date(trip.actual_departure_at ?? trip.scheduled_departure_at).getTime() - Math.round(rand() * 12 + 2) * 60_000).toISOString()
       db.boarding_events.push({
         id: uuid(), booking_id: booking.id, ticket_id: ticket.id, trip_id: trip.id,
-        stop_id: db.route_stops.find((rs) => rs.id === origin.id)!.stop_id,
-        boarded_at: boardedAt,
+        stop_id: origin.stop_id, boarded_at: boardedAt,
         validation_method: chance(0.88) ? 'qr_scan' : chance(0.5) ? 'booking_code' : 'phone_lookup',
         validator_user_id: chance(0.5) ? agentMararaba.id : agentCbd.id,
         device_id: 'HUB-SCANNER-01', result: 'valid', rejection_reason: null, override_reason: null,
@@ -633,7 +749,6 @@ export function buildSeed(): DamovDatabase {
       })
       booking.status = trip.status === 'completed' ? 'completed' : 'boarded'
       ticket.status = 'used'
-      const auth = db.sponsor_authorizations.find((s) => s.booking_id === booking.id)
       if (auth) {
         auth.status = 'recognized'
         auth.amount_recognized = auth.amount_reserved
@@ -645,24 +760,29 @@ export function buildSeed(): DamovDatabase {
     return booking
   }
 
+  const publicRiders = riders.filter((r) => !riderById.get(r.id)?.organization_id)
   for (const trip of sortedTrips) {
     const departureMs = new Date(trip.scheduled_departure_at).getTime()
-    const isPeak = (() => {
-      const hour = Number(new Date(trip.scheduled_departure_at).toLocaleString('en-GB', { timeZone: 'Africa/Lagos', hour: '2-digit', hour12: false }))
-      return (hour >= 6 && hour <= 8) || (hour >= 16 && hour <= 18)
-    })()
+    const hour = Number(new Date(trip.scheduled_departure_at).toLocaleString('en-GB', { timeZone: 'Africa/Lagos', hour: '2-digit', hour12: false }))
+    const isPeak = (hour >= 6 && hour <= 8) || (hour >= 16 && hour <= 18)
     if (departureMs > nowMs + 6 * 3_600_000) continue
 
-    const historic = trip.service_date !== today
-    const base = isPeak ? 22 + Math.floor(rand() * 14) : 7 + Math.floor(rand() * 10)
-    const load = historic ? Math.round(base * 0.55) : base
+    const ageDays = Math.round((new Date(`${today}T12:00:00Z`).getTime() - new Date(`${trip.service_date}T12:00:00Z`).getTime()) / 86_400_000)
+    // Ridership has climbed through the pilot — the corridor crossed
+    // break-even this week. Older days ran lighter; weekends lighter still.
+    const growth = 1 - Math.min(0.34, ageDays * 0.038)
+    const dow = new Date(`${trip.service_date}T12:00:00Z`).getUTCDay()
+    const weekend = dow === 0 || dow === 6 ? 0.82 : 1
+    const base = isPeak ? 27 + Math.floor(rand() * 13) : 10 + Math.floor(rand() * 9)
+    const load = Math.round(base * growth * weekend)
     for (let i = 0; i < load; i++) {
-      const rider = pick(riders)
+      // Staff programmes run Monday to Friday; weekend travel skews to the public.
+      const rider = dow === 0 || dow === 6 ? (chance(0.7) ? pick(publicRiders) : pick(riders)) : pick(riders)
       const cash = chance(0.38)
       seedBooking(trip, rider, {
         channel: cash ? 'hub' : chance(0.15) ? 'whatsapp' : 'rider_web',
         method: cash ? 'cash' : 'card',
-        sessionId: cash ? (trip.service_date === today ? openSession.id : closedSession.id) : undefined,
+        sessionId: cash ? sessionForDate.get(trip.service_date) : undefined,
       })
     }
   }
@@ -677,21 +797,20 @@ export function buildSeed(): DamovDatabase {
   /* --- Direct costs ---------------------------------------------------- */
   const costTemplate: { category: CostCategory; perKm?: number; flat?: number; unit?: string }[] = [
     { category: 'energy', perKm: 92, unit: 'km' },
-    { category: 'driver', flat: 3_000 },
-    { category: 'support_staff', flat: 1_200 },
+    { category: 'driver', flat: 2_500 },
+    { category: 'support_staff', flat: 700 },
     { category: 'maintenance_reserve', perKm: 38 },
     { category: 'tyre_reserve', perKm: 14 },
-    { category: 'cleaning', flat: 700 },
-    { category: 'terminal', flat: 900 },
+    { category: 'cleaning', flat: 500 },
+    { category: 'terminal', flat: 600 },
     { category: 'toll', flat: 400 },
-    { category: 'lease_allocation', flat: 3_500 },
+    { category: 'lease_allocation', flat: 1_900 },
   ]
-  for (const trip of db.trips.filter((t) => ['completed', 'in_service', 'departed'].includes(t.status))) {
-    const stops = db.route_stops
-      .filter((rs) => rs.route_direction_id === trip.route_direction_id)
-      .sort((a, b) => a.sequence - b.sequence)
+  for (const trip of db.trips) {
+    if (!['completed', 'in_service', 'departed'].includes(trip.status)) continue
+    const stops = stopsByDirection.get(trip.route_direction_id)!
     const distance = stops[stops.length - 1]?.distance_from_start_km ?? 20
-    const direction = db.route_directions.find((d) => d.id === trip.route_direction_id)!
+    const direction = directionById.get(trip.route_direction_id)!
     for (const entry of costTemplate) {
       const amount = entry.perKm ? Math.round(entry.perKm * distance) : (entry.flat ?? 0)
       db.cost_entries.push({
@@ -703,14 +822,12 @@ export function buildSeed(): DamovDatabase {
       })
     }
     // Card fees follow actual digital collections.
-    const digital = db.payments.filter(
-      (p) => p.method === 'card' && p.status === 'succeeded' && db.bookings.some((b) => b.id === p.booking_id && b.trip_id === trip.id),
-    )
-    const fees = Math.round(digital.reduce((a, p) => a + p.amount, 0) * 0.015)
+    const takings = cardTakingsByTrip.get(trip.id)
+    const fees = takings ? Math.round(takings.amount * 0.015) : 0
     if (fees > 0) {
       db.cost_entries.push({
         id: uuid(), service_date: trip.service_date, trip_id: trip.id, vehicle_id: trip.vehicle_id,
-        route_id: direction.route_id, category: 'payment_processing', amount: fees, quantity: digital.length,
+        route_id: direction.route_id, category: 'payment_processing', amount: fees, quantity: takings!.count,
         unit: 'transactions', evidence_url: null, source: 'derived', approval_status: 'approved',
         created_by: finance.id, created_at: now,
       })
@@ -719,6 +836,34 @@ export function buildSeed(): DamovDatabase {
 
   /* --- Incidents ------------------------------------------------------- */
   const liveTrip = db.trips.find((t) => t.status === 'in_service')
+  const completedTrips = db.trips.filter((t) => t.status === 'completed')
+  const historicIncidentSeed: { category: Incident['category']; severity: Incident['severity']; effect: Incident['operational_effect']; description: string; resolution: string; status: Incident['status']; daysAgo: number; coords: [number, number] | null; hub?: string }[] = [
+    { category: 'passenger_issue', severity: 'low', effect: 'none', description: 'Passenger boarded with a ticket for the following departure; agent re-issued against the correct trip.', resolution: 'Ticket re-issued at the gate. No capacity impact.', status: 'closed', daysAgo: 1, coords: [7.618, 8.988] },
+    { category: 'route_obstruction', severity: 'high', effect: 'route_diverted', description: 'Road works closed one lane at Kugbo Market. Inbound services diverted via the service road for the morning peak.', resolution: 'Diversion lifted at 10:40 after FCTA cleared the works.', status: 'resolved', daysAgo: 2, coords: [7.52, 9.03] },
+    { category: 'safety', severity: 'critical', effect: 'delay', description: 'Near-miss at Berger Roundabout involving a private vehicle running the signal. Driver braked hard; no injuries. Dashcam footage preserved.', resolution: 'Driver debriefed, footage filed with FRSC. Defensive-driving refresher scheduled.', status: 'resolved', daysAgo: 3, coords: [7.4693, 9.047] },
+    { category: 'breakdown', severity: 'high', effect: 'vehicle_withdrawn', description: 'DMV-005 low CNG pressure warning mid-route at Jabi. Trip completed on reserve, bus withdrawn for the afternoon.', resolution: 'Regulator replaced. Returned to service next morning.', status: 'closed', daysAgo: 4, coords: [7.43, 9.07] },
+    { category: 'congestion', severity: 'medium', effect: 'delay', description: 'Tanker spill on the Nyanya–Mararaba axis. Outbound evening departures averaged 22 minutes late.', resolution: 'Passengers notified via in-app and SMS. Headway restored by 19:30.', status: 'resolved', daysAgo: 5, coords: [7.6, 8.996] },
+    { category: 'security', severity: 'medium', effect: 'none', description: 'Unattended bag reported at CBD Central bay 3. Area cleared and bag claimed by a passenger from the 17:20 service.', resolution: 'False alarm. Protocol followed in 11 minutes.', status: 'closed', daysAgo: 6, coords: [7.4913, 9.0563] },
+    { category: 'passenger_issue', severity: 'low', effect: 'none', description: 'Dispute over a sponsored fare at the Mararaba counter — staff ID had lapsed with the ministry list.', resolution: 'Eligibility confirmed with FMoT and refreshed in the import batch.', status: 'closed', daysAgo: 8, coords: null },
+    { category: 'breakdown', severity: 'medium', effect: 'vehicle_withdrawn', description: 'Rear door sensor fault on DMV-003 prevented departure interlock. Swapped to DMV-009 at the hub.', resolution: 'Sensor recalibrated by the workshop.', status: 'closed', daysAgo: 10, coords: [7.618, 8.988] },
+    { category: 'delay', severity: 'low', effect: 'delay', description: 'Late driver handover at Kubwa Interchange delayed the 06:40 by 9 minutes.', resolution: 'Shift briefing moved 15 minutes earlier.', status: 'closed', daysAgo: 12, coords: [7.33, 9.15] },
+    { category: 'congestion', severity: 'medium', effect: 'delay', description: 'Traffic signal outage at AYA. Inbound services held 8–12 minutes through the morning peak.', resolution: 'Signal restored by 09:10. Passengers notified.', status: 'open', daysAgo: 0, coords: [7.512, 9.036] },
+  ]
+  const historicIncidents: Incident[] = historicIncidentSeed.map((entry, i) => {
+    const reportedAt = new Date(nowMs - entry.daysAgo * 86_400_000 - (3 + (i % 5)) * 3_600_000).toISOString()
+    const trip = completedTrips[(i * 7) % Math.max(1, completedTrips.length)]
+    return {
+      id: uuid(), reference: `INC-${String(3 + i).padStart(5, '0')}`, category: entry.category, severity: entry.severity,
+      trip_id: trip?.id ?? null, vehicle_id: trip?.vehicle_id ?? null, route_id: pilot.route.id, hub_id: null,
+      description: entry.description, latitude: entry.coords?.[1] ?? null, longitude: entry.coords?.[0] ?? null,
+      evidence_urls: [], reported_by: drivers[i % drivers.length].id,
+      assigned_to: entry.severity === 'critical' ? opsManager.id : dispatcher.id, status: entry.status,
+      resolution: entry.status === 'open' ? null : entry.resolution, operational_effect: entry.effect,
+      passenger_notification_required: entry.effect === 'delay' || entry.effect === 'route_diverted',
+      reported_at: reportedAt,
+      resolved_at: entry.status === 'open' ? null : new Date(new Date(reportedAt).getTime() + (40 + i * 11) * 60_000).toISOString(),
+    }
+  })
   db.incidents = [
     {
       id: uuid(), reference: 'INC-00001', category: 'congestion', severity: 'medium',
@@ -742,6 +887,7 @@ export function buildSeed(): DamovDatabase {
       reported_at: new Date(nowMs - 20 * 3_600_000).toISOString(),
       resolved_at: new Date(nowMs - 17 * 3_600_000).toISOString(),
     },
+    ...historicIncidents,
   ]
 
   /* --- Notifications for the demo rider -------------------------------- */
@@ -764,7 +910,42 @@ export function buildSeed(): DamovDatabase {
         body: `${trip.trip_code} departs soon from your boarding point.`,
         payload: {}, status: 'sent', sent_at: now, read_at: null, created_at: now,
       },
+      {
+        id: uuid(), recipient_id: demoRider.id, booking_id: demoBooking.id, trip_id: trip.id,
+        channel: 'in_app', template: 'payment_confirmed',
+        title: `Payment confirmed · ₦${demoBooking.passenger_contribution.toLocaleString('en-NG')}`,
+        body: 'Your card payment was verified by the provider.',
+        payload: {}, status: 'read', sent_at: demoBooking.created_at, read_at: demoBooking.created_at, created_at: demoBooking.created_at,
+      },
+      {
+        id: uuid(), recipient_id: demoRider.id, booking_id: null, trip_id: null,
+        channel: 'whatsapp', template: 'trip_delayed',
+        title: 'Evening services running late',
+        body: 'A tanker spill on the Nyanya axis is adding around 20 minutes to outbound departures. We will update you when headways recover.',
+        payload: {}, status: 'read', sent_at: new Date(nowMs - 5 * 86_400_000).toISOString(), read_at: new Date(nowMs - 5 * 86_400_000).toISOString(), created_at: new Date(nowMs - 5 * 86_400_000).toISOString(),
+      },
+      {
+        id: uuid(), recipient_id: demoRider.id, booking_id: null, trip_id: null,
+        channel: 'email', template: 'eligibility_changed',
+        title: 'Your FMoT commute benefit was renewed',
+        body: 'Your staff eligibility is confirmed through December 2026. ₦300 of every eligible trip is covered.',
+        payload: {}, status: 'read', sent_at: new Date(nowMs - 9 * 86_400_000).toISOString(), read_at: new Date(nowMs - 8 * 86_400_000).toISOString(), created_at: new Date(nowMs - 9 * 86_400_000).toISOString(),
+      },
     )
+  }
+
+  /* --- Pre-trip inspections ------------------------------------------- */
+  const checklistTemplate = ['Tyres and wheel nuts', 'Brakes and parking brake', 'Lights and indicators', 'Mirrors and wipers', 'Doors and interlock', 'Fire extinguisher and first aid', 'Battery / fuel level', 'Cleanliness and seating']
+  for (const trip of db.trips.filter((t) => t.service_date === today && t.vehicle_id && t.driver_id && t.actual_departure_at)) {
+    if (db.vehicle_inspections.some((i) => i.vehicle_id === trip.vehicle_id && i.submitted_at >= `${today}T00:00:00.000Z`)) continue
+    const vehicle = db.vehicles.find((v) => v.id === trip.vehicle_id)!
+    db.vehicle_inspections.push({
+      id: uuid(), vehicle_id: vehicle.id, driver_id: trip.driver_id!, trip_id: trip.id,
+      checklist: checklistTemplate.map((label, i) => ({ key: `item_${i}`, label, passed: true })),
+      passed: true, defects: null, odometer_km: vehicle.odometer_km,
+      submitted_at: new Date(new Date(trip.scheduled_departure_at).getTime() - 25 * 60_000).toISOString(),
+      supervisor_decision: 'not_required', supervisor_id: null,
+    })
   }
 
   /* --- Vehicle telemetry (demo simulation) ----------------------------- */
@@ -817,12 +998,20 @@ export function buildSeed(): DamovDatabase {
     { actor: finance, action: 'fare_policy.published', entity: 'fare_policy', summary: 'Abuja Pilot Distance Fare 2026 v3 published — ₦25/km, ₦200 minimum.', severity: 'sensitive' as const },
     { actor: institutionAdmin, action: 'subsidy_policy.published', entity: 'subsidy_policy', summary: 'FMoT Staff Commute Co-pay 2026 v2 published — ₦300 per trip, 2 trips/day, ₦14m ceiling.', severity: 'sensitive' as const },
     { actor: institutionAdmin, action: 'eligibility.imported', entity: 'eligibility_record', summary: 'Imported 40 eligible staff records in batch FMOT-2026-Q1.', severity: 'sensitive' as const },
+    { actor: institutionAdmin, action: 'subsidy_policy.published', entity: 'subsidy_policy', summary: 'Zenith Hub Commute Benefit v1 published — 60% of fare up to ₦500, 2 trips/day.', severity: 'sensitive' as const },
+    { actor: supervisorProfile, action: 'cash_session.approved', entity: 'cash_session', summary: 'CBD Central session approved — variance ₦0.', severity: 'sensitive' as const },
+    { actor: supervisorProfile, action: 'boarding.override', entity: 'booking', summary: 'Supervisor override at Mararaba gate — passenger boarded the 07:00 with a 07:20 ticket after a wheelchair transfer.', severity: 'sensitive' as const },
+    { actor: dispatcher, action: 'trip.assigned_with_override', entity: 'trip', summary: 'AB-01 17:00 assigned to DMV-009 after DMV-003 door sensor fault.', severity: 'sensitive' as const },
+    { actor: finance, action: 'cost_entry.approved', entity: 'cost_entry', summary: 'Approved 44 derived energy entries for the service day.', severity: 'info' as const },
+    { actor: opsManager, action: 'configuration.updated', entity: 'configuration', summary: 'Boarding window close changed from 3 to 5 minutes after departure.', severity: 'sensitive' as const },
+    { actor: supervisorProfile, action: 'cash_session.rejected', entity: 'cash_session', summary: 'Mararaba session rejected — declared figure did not match recount.', severity: 'sensitive' as const },
+    { actor: dispatcher, action: 'trip.cancelled', entity: 'trip', summary: 'AB-02 06:40 cancelled — road works at Dei-Dei; 14 passengers reversed.', severity: 'sensitive' as const },
     { actor: dispatcher, action: 'trips.generated', entity: 'schedule_template', summary: `Generated the ${today} service day across 6 schedule templates.`, severity: 'info' as const },
   ]
   db.audit_logs = auditSeed.map((entry, i) => ({
     id: uuid(), actor_id: entry.actor.id, actor_name: entry.actor.full_name, action: entry.action,
     entity_type: entry.entity, entity_id: null, summary: entry.summary, diff: null,
-    severity: entry.severity, occurred_at: new Date(nowMs - (auditSeed.length - i) * 47 * 60_000).toISOString(),
+    severity: entry.severity, occurred_at: new Date(nowMs - (auditSeed.length - i) * 19 * 3_600_000).toISOString(),
   }))
 
   return db

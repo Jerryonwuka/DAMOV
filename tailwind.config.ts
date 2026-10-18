@@ -4,12 +4,12 @@ import animate from 'tailwindcss-animate'
 /**
  * Damov design system.
  *
- * Brand primitives (source of truth — mirror of the brand sheet):
- *   Damov green        #6FBF48   hsl(100 48% 52%)   primary action / active service
- *   Deep operational   #0E392C   hsl(162 61% 14%)   navigation, operational chrome
- *   Signal amber       #E9B10A   hsl(45 92% 48%)    warnings, targets, pending
- *   Signal orange      #D9522A   hsl(14 70% 51%)    critical operational attention
- *   Mist               #CFD4D2   hsl(160 6% 82%)    dividers, muted surfaces
+ * Brand primitives:
+ *   Damov green        hsl(100 58% 56%)   primary action, live service, the glow
+ *   Ink                hsl(160 10% 4%)    the operating surface
+ *   Signal amber       hsl(45 92% 48%)    warnings, targets, pending
+ *   Signal orange      hsl(14 70% 51%)    critical attention
+ *   Good               hsl(152 64% 46%)   positive deltas and healthy status only
  */
 export default {
   darkMode: ['class'],
@@ -26,31 +26,32 @@ export default {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
-          50: 'hsl(100 48% 96%)',
-          100: 'hsl(100 48% 90%)',
-          200: 'hsl(100 48% 80%)',
-          300: 'hsl(100 48% 70%)',
-          400: 'hsl(100 48% 60%)',
-          500: 'hsl(100 48% 52%)',
-          600: 'hsl(100 50% 42%)',
-          700: 'hsl(100 52% 32%)',
-          800: 'hsl(120 45% 22%)',
-          900: 'hsl(162 61% 14%)',
+          50: 'hsl(100 50% 96%)',
+          100: 'hsl(100 50% 91%)',
+          200: 'hsl(100 52% 82%)',
+          300: 'hsl(100 55% 70%)',
+          400: 'hsl(100 58% 62%)',
+          500: 'hsl(100 58% 54%)',
+          600: 'hsl(100 55% 44%)',
+          700: 'hsl(100 55% 34%)',
+          800: 'hsl(110 50% 24%)',
+          900: 'hsl(140 50% 14%)',
         },
-        forest: {
-          DEFAULT: 'hsl(162 61% 14%)',
-          50: 'hsl(162 30% 95%)',
-          100: 'hsl(162 28% 88%)',
-          200: 'hsl(162 26% 74%)',
-          300: 'hsl(162 28% 56%)',
-          400: 'hsl(162 40% 34%)',
-          500: 'hsl(162 55% 22%)',
-          600: 'hsl(162 61% 17%)',
-          700: 'hsl(162 61% 14%)',
-          800: 'hsl(162 62% 11%)',
-          900: 'hsl(162 64% 8%)',
-          950: 'hsl(162 66% 5%)',
+        ink: {
+          DEFAULT: 'hsl(160 10% 5%)',
+          50: 'hsl(150 15% 96%)',
+          100: 'hsl(150 12% 90%)',
+          200: 'hsl(155 10% 76%)',
+          300: 'hsl(158 8% 56%)',
+          400: 'hsl(160 8% 34%)',
+          500: 'hsl(160 9% 20%)',
+          600: 'hsl(160 9% 13%)',
+          700: 'hsl(160 9% 9%)',
+          800: 'hsl(160 10% 6%)',
+          900: 'hsl(160 10% 4%)',
+          950: 'hsl(160 12% 2%)',
         },
+        good: { DEFAULT: 'hsl(152 64% 46%)', foreground: 'hsl(152 70% 10%)' },
         secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
         muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
         accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
@@ -76,17 +77,19 @@ export default {
         '2xl': 'calc(var(--radius) + 10px)',
       },
       fontFamily: {
-        sans: ['Inter var', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       fontSize: {
         '2xs': ['0.6875rem', { lineHeight: '1rem', letterSpacing: '0.02em' }],
       },
       boxShadow: {
-        subtle: '0 1px 2px 0 hsl(162 30% 10% / 0.05)',
-        card: '0 1px 3px hsl(162 30% 10% / 0.06), 0 8px 24px -12px hsl(162 30% 10% / 0.14)',
-        lifted: '0 2px 6px hsl(162 30% 10% / 0.08), 0 18px 40px -18px hsl(162 30% 10% / 0.28)',
-        glow: '0 0 0 1px hsl(100 48% 52% / 0.35), 0 8px 32px -8px hsl(100 48% 52% / 0.45)',
+        subtle: '0 1px 2px 0 hsl(160 20% 2% / 0.4)',
+        card: '0 1px 2px hsl(160 20% 2% / 0.45), 0 10px 30px -18px hsl(160 20% 2% / 0.6)',
+        lifted: '0 2px 6px hsl(160 20% 2% / 0.5), 0 24px 48px -20px hsl(160 20% 2% / 0.7)',
+        glow: '0 0 0 1px hsl(100 58% 56% / 0.4), 0 10px 36px -8px hsl(100 58% 56% / 0.5)',
+        'glow-sm': '0 0 0 1px hsl(100 58% 56% / 0.3), 0 4px 16px -4px hsl(100 58% 56% / 0.4)',
       },
       keyframes: {
         'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },
@@ -101,6 +104,7 @@ export default {
         },
         'route-dash': { to: { strokeDashoffset: '-24' } },
         'count-tick': { '0%': { transform: 'translateY(40%)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+        wave: { '0%, 100%': { transform: 'rotate(0deg)' }, '20%': { transform: 'rotate(14deg)' }, '40%': { transform: 'rotate(-8deg)' }, '60%': { transform: 'rotate(14deg)' }, '80%': { transform: 'rotate(-4deg)' } },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

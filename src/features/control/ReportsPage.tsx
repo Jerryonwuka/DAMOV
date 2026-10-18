@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Download, FileBarChart, Lock } from 'lucide-react'
+import { Download, FileBarChart, Lock } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useConfig, useServiceDate } from '@/hooks/use-damov'

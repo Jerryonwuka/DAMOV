@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Upload, UserCheck, UserX, Users } from 'lucide-react'
+import { Upload, UserCheck, UserX, Users } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

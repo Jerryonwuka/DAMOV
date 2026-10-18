@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { ScrollText, ShieldAlert } from 'lucide-react'
+import { ScrollText, ShieldAlert } from '@/components/icons'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -23,7 +23,7 @@ export function AuditPage() {
     { key: 'actor', header: 'Actor', value: (r) => r.actor_name, cell: (r) => <span className="font-medium">{r.actor_name}</span> },
     { key: 'action', header: 'Action', value: (r) => r.action, cell: (r) => <code className="rounded bg-muted px-1.5 py-0.5 text-2xs">{r.action}</code> },
     { key: 'entity', header: 'Entity', value: (r) => r.entity_type, cell: (r) => <span className="text-xs">{r.entity_type}{r.entity_id ? <span className="text-muted-foreground tnum"> · {r.entity_id.slice(0, 8)}</span> : null}</span>, hideable: true },
-    { key: 'summary', header: 'Summary', value: (r) => r.summary, cell: (r) => <span className="text-xs">{r.summary}{r.diff && <span className="mt-0.5 block text-2xs text-muted-foreground">{Object.entries(r.diff).map(([k, v]) => `${k}: ${String(v.before)} → ${String(v.after)}`).join('; ')}</span>}</span> },
+    { wrap: true, key: 'summary', header: 'Summary', value: (r) => r.summary, cell: (r) => <span className="text-xs">{r.summary}{r.diff && <span className="mt-0.5 block text-2xs text-muted-foreground">{Object.entries(r.diff).map(([k, v]) => `${k}: ${String(v.before)} → ${String(v.after)}`).join('; ')}</span>}</span> },
   ]
 
   return (

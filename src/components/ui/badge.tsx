@@ -12,8 +12,9 @@ const badgeVariants = cva(
     variants: {
       tone: {
         neutral: 'border-border bg-muted text-muted-foreground',
-        primary: 'border-primary/25 bg-primary/12 text-primary-700 dark:text-primary-300',
-        forest: 'border-forest-700/20 bg-forest-700/10 text-forest-700 dark:border-forest-300/25 dark:bg-forest-300/10 dark:text-forest-200',
+        primary: 'border-primary/30 bg-primary/12 text-primary-700 dark:text-primary-300',
+        good: 'border-good/30 bg-good/12 text-[hsl(152_60%_30%)] dark:text-[hsl(152_70%_66%)]',
+        ink: 'border-ink-700/20 bg-ink-700/10 text-ink-700 dark:border-ink-300/25 dark:bg-ink-300/10 dark:text-ink-200',
         warning: 'border-warning/30 bg-warning/15 text-[hsl(45_96%_26%)] dark:text-[hsl(45_92%_62%)]',
         critical: 'border-critical/30 bg-critical/12 text-[hsl(14_70%_38%)] dark:text-[hsl(14_80%_66%)]',
         info: 'border-info/30 bg-info/12 text-[hsl(206_74%_34%)] dark:text-[hsl(206_74%_66%)]',

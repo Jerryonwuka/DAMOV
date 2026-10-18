@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Info } from 'lucide-react'
+import { Info } from '@/components/icons'
 import { naira } from '@/lib/format'
 import type { FareQuote } from '@/lib/types'
 import { cn } from '@/lib/utils'

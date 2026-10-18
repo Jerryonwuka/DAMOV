@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { Bell, CheckCheck, MessageSquare, Smartphone } from 'lucide-react'
+import { Bell, CheckCheck, MessageSquare, Smartphone } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'

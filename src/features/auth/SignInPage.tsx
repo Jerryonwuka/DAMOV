@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Building2, Check, KeyRound, Phone, ShieldCheck, Users } from 'lucide-react'
+import { ArrowRight, Building2, Check, KeyRound, Phone, ShieldCheck, Users } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { ROLE_HOME, ROLE_LABELS } from '@/auth/permissions'
 import { DamovLogo } from '@/components/brand'
@@ -82,7 +82,7 @@ export function SignInPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
       {/* Brand panel */}
-      <div className="forest-gradient relative hidden flex-col justify-between overflow-hidden p-10 text-white lg:flex">
+      <div className="ink-gradient relative hidden flex-col justify-between overflow-hidden p-10 text-white lg:flex">
         <div className="surface-grid pointer-events-none absolute inset-0 opacity-[0.06]" />
         <DamovLogo size="lg" className="relative" />
 

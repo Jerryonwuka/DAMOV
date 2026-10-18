@@ -3,7 +3,7 @@ import {
   Coins, Compass, CreditCard, Database, FileBarChart, Fingerprint, Gauge, Home, Landmark, ListChecks,
   Map, MapPinned,Plug, Receipt, ScrollText, Settings, ShieldCheck, Ticket, UserCog, Users, Wallet,
   Wrench,
-} from 'lucide-react'
+} from '@/components/icons'
 import type { Permission, Surface } from '@/auth/permissions'
 
 export interface NavItem {

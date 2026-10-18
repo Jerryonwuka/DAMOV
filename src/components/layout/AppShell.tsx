@@ -2,8 +2,8 @@ import * as React from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  Bell, ChevronDown, LogOut, Menu, Moon, RefreshCw, Sun, X,
-} from 'lucide-react'
+  Bell, ChevronDown, LogOut, Menu, Moon, RefreshCw, Search, Sun, X,
+} from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { ROLE_LABELS, SURFACE_LABELS, surfacesFor, type Surface } from '@/auth/permissions'
 import { DamovLogo, DamovMark } from '@/components/brand'
@@ -82,15 +82,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       >
         <div className="flex h-16 items-center gap-2 px-5">
           <DamovLogo className="text-white" size="sm" />
+          <span className="ml-auto rounded-md border border-white/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-white/50">ABUJA</span>
         </div>
-        <div className="px-3 pb-2">
+        <div className="space-y-2 px-3 pb-2">
           <SurfaceSwitcher current={surface} available={availableSurfaces} onSelect={(s) => navigate(surfaceHome(s))} />
+          <button
+            type="button"
+            onClick={() => navigate(surface === 'control' ? '/control/manifest' : surface === 'hub' ? '/hub/lookup' : surfaceHome(surface))}
+            className="press flex w-full items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.04] px-3 py-2 text-left text-xs text-white/50 transition-colors hover:border-white/10 hover:bg-white/[0.07] hover:text-white/80"
+          >
+            <Search className="size-3.5" />
+            <span className="flex-1">Search anything</span>
+            <kbd className="rounded border border-white/10 bg-white/5 px-1 font-sans text-[10px]">⌘K</kbd>
+          </button>
         </div>
         <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-3">
           {sections.map((section, i) => (
             <div key={section.label ?? i}>
               {section.label && (
-                <p className="px-3 pb-1.5 text-2xs font-semibold uppercase tracking-wider text-sidebar-muted">
+                <p className="px-3 pb-1.5 text-[11px] font-semibold text-sidebar-muted">
                   {section.label}
                 </p>
               )}
@@ -101,26 +111,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                       {({ isActive }) => (
                         <span
                           className={cn(
-                            'group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ease-damov',
-                            isActive
-                              ? 'bg-white/10 text-white'
-                              : 'text-sidebar-foreground/70 hover:bg-white/5 hover:text-white',
+                            'group relative flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200 ease-damov',
+                            isActive ? 'text-white' : 'text-sidebar-foreground/65 hover:bg-white/[0.04] hover:text-white',
                           )}
                         >
                           {isActive && (
                             <motion.span
                               layoutId="nav-active"
-                              className="absolute inset-y-1.5 left-0 w-1 rounded-r-full bg-sidebar-accent"
-                              transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                              className="absolute inset-0 rounded-xl bg-white/[0.07]"
+                              transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                             />
                           )}
                           <item.icon
                             className={cn(
-                              'size-4 shrink-0 transition-transform duration-200 ease-damov group-hover:scale-110',
-                              isActive && 'text-sidebar-accent',
+                              'relative size-[18px] shrink-0 transition-transform duration-200 ease-damov group-hover:scale-110',
+                              isActive ? 'text-white' : 'text-sidebar-foreground/55 group-hover:text-white',
                             )}
                           />
-                          <span className="truncate">{item.label}</span>
+                          <span className="relative truncate">{item.label}</span>
                         </span>
                       )}
                     </NavLink>
@@ -137,7 +145,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b border-border bg-background/85 px-3 backdrop-blur-md sm:px-5">
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b border-border/80 bg-background/75 px-3 backdrop-blur-xl sm:px-5">
           <Button
             variant="ghost"
             size="icon"
@@ -157,11 +165,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           ) : (
-            <div className="hidden min-w-0 sm:block">
-              <p className="truncate text-sm font-semibold">{SURFACE_LABELS[surface]}</p>
-              <p className="text-2xs text-muted-foreground">
-                Abuja network · {lagosTime(new Date(now).toISOString())} WAT
-              </p>
+            <div className="hidden min-w-0 items-center gap-2 text-sm sm:flex">
+              <span className="font-semibold">{SURFACE_LABELS[surface]}</span>
+              <span className="text-muted-foreground/50">/</span>
+              <span className="text-muted-foreground">Abuja network</span>
+              <span className="ml-2 inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-2 py-0.5 text-xs text-muted-foreground tnum">
+                <span className="relative flex size-1.5"><span className="absolute inline-flex size-full animate-pulse-ring rounded-full bg-good" /><span className="relative inline-flex size-1.5 rounded-full bg-good" /></span>
+                {lagosTime(new Date(now).toISOString())} WAT
+              </span>
             </div>
           )}
 
@@ -204,8 +215,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="press ml-1 flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 transition-colors hover:bg-accent">
-                  <Avatar className="size-8">
-                    <AvatarFallback>{initials(profile?.full_name ?? 'DM')}</AvatarFallback>
+                  <Avatar className="size-8 ring-2 ring-primary/40 ring-offset-2 ring-offset-background">
+                    <AvatarFallback className="bg-gradient-to-br from-primary-400 to-emerald-600 text-white">{initials(profile?.full_name ?? 'DM')}</AvatarFallback>
                   </Avatar>
                   <span className="hidden text-left leading-tight md:block">
                     <span className="block max-w-[9rem] truncate text-xs font-semibold">{profile?.full_name}</span>
@@ -269,7 +280,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         {/* Mobile tab bar for the field surfaces */}
         {isFieldSurface && mobileItems.length > 0 && (
-          <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
+          <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
             <ul className="mx-auto flex max-w-lg items-stretch">
               {mobileItems.map((item) => (
                 <li key={item.to} className="flex-1">
@@ -305,7 +316,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {mobileNavOpen && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-forest-950/50 backdrop-blur-[2px] lg:hidden"
+              className="fixed inset-0 z-40 bg-ink-950/50 backdrop-blur-[2px] lg:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

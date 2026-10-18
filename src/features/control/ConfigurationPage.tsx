@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Save, Settings2 } from 'lucide-react'
+import { Save, Settings2 } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { Badge } from '@/components/ui/badge'

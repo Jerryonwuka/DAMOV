@@ -1,7 +1,7 @@
 import { Suspense, lazy, useCallback, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion, Reorder } from 'framer-motion'
-import { ArrowLeft, ArrowUpFromLine, CheckCircle2, GripVertical, Plus, Send, Trash2, X } from 'lucide-react'
+import { ArrowLeft, ArrowUpFromLine, CheckCircle2, GripVertical, Plus, Send, Trash2, X } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useTheme } from '@/hooks/use-theme'
@@ -388,7 +388,7 @@ export function RouteDetailPage() {
                   <Badge tone={version.approval_state === 'approved' ? 'primary' : version.approval_state === 'superseded' ? 'neutral' : 'warning'}>{titleCase(version.approval_state)}</Badge>
                   <span className="text-muted-foreground">{km(version.distance_km)} · {titleCase(version.source)} · {version.geometry.coordinates.length} vertices</span>
                   <span className="ml-auto text-xs text-muted-foreground">{lagosDateTime(version.created_at)}</span>
-                  {version.id === route.current_geometry_version_id && <Badge tone="forest" size="sm">Current</Badge>}
+                  {version.id === route.current_geometry_version_id && <Badge tone="ink" size="sm">Current</Badge>}
                 </div>
               ))}
             </CardContent>

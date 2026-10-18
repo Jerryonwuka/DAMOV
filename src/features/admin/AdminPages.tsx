@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Building2, Fingerprint, KeyRound, Plug, Plus, ShieldCheck, UserPlus } from 'lucide-react'
+import { Building2, Fingerprint, KeyRound, Plug, Plus, ShieldCheck, UserPlus } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { PERMISSIONS, ROLE_LABELS, ROLE_PERMISSIONS, surfacesFor, SURFACE_LABELS } from '@/auth/permissions'
@@ -144,7 +144,7 @@ export function UsersRolesPage() {
     { key: 'hub', header: 'Hub', value: (r) => r.hub ?? '', cell: (r) => r.hub ?? '—', hideable: true },
     { key: 'id', header: 'Employment ID', value: (r) => r.profile.employment_id ?? '', cell: (r) => <span className="tnum">{r.profile.employment_id ?? '—'}</span>, hideable: true },
     { key: 'status', header: 'Status', value: (r) => r.profile.status, cell: (r) => <Badge tone={r.profile.status === 'active' ? 'primary' : r.profile.status === 'invited' ? 'info' : 'critical'}>{titleCase(r.profile.status)}</Badge> },
-    { key: 'mfa', header: 'MFA', value: (r) => (r.profile.mfa_enrolled ? 1 : 0), cell: (r) => (r.profile.mfa_enrolled ? <Badge tone="forest" size="sm">Enrolled</Badge> : <span className="text-xs text-muted-foreground">Ready</span>), hideable: true },
+    { key: 'mfa', header: 'MFA', value: (r) => (r.profile.mfa_enrolled ? 1 : 0), cell: (r) => (r.profile.mfa_enrolled ? <Badge tone="ink" size="sm">Enrolled</Badge> : <span className="text-xs text-muted-foreground">Ready</span>), hideable: true },
     { key: 'login', header: 'Last login', value: (r) => r.profile.last_login_at ?? '', cell: (r) => <span className="text-xs">{r.profile.last_login_at ? relative(r.profile.last_login_at) : 'Never'}</span> },
     {
       key: 'actions', header: '', sortable: false,

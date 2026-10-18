@@ -1,4 +1,4 @@
-import { AlertTriangle, Bus, Clock, Gauge, Layers, MapPin, Radio, User } from 'lucide-react'
+import { AlertTriangle, Bus, Clock, Gauge, Layers, MapPin, Radio, User } from '@/components/icons'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/misc'
 import { DefinitionRow } from '@/components/ui/patterns'

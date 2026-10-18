@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Building2, LogOut, MapPin, Phone, ShieldCheck, User } from 'lucide-react'
+import { Building2, LogOut, MapPin, Phone, ShieldCheck, User } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useOrganization, useRiderProfile } from '@/hooks/use-damov'

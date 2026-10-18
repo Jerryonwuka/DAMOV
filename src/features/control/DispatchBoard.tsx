@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { AlertTriangle, Bus, CheckCircle2, ShieldAlert, User } from 'lucide-react'
+import { AlertTriangle, Bus, CheckCircle2, ShieldAlert, User } from '@/components/icons'
 import { useAuth } from '@/auth/AuthProvider'
 import { useDb } from '@/db/store'
 import { useServiceDate } from '@/hooks/use-damov'

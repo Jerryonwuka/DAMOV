@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Pause, Play, Search, SlidersHorizontal, WifiOff } from 'lucide-react'
+import { Pause, Play, Search, SlidersHorizontal, WifiOff } from '@/components/icons'
 import { useDb } from '@/db/store'
 import { DamovMap } from '@/components/map/DamovMap'
 import { MapFilterPanel, VehicleDrawer, type MapFilters } from '@/components/map/MapPanels'
